@@ -1,0 +1,381 @@
+/* ==========================================================
+   OBT Agency Management System
+   Tables
+   Author : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   TABLE CONTAINER
+========================================================== */
+
+.table-container{
+
+    width:100%;
+
+    overflow-x:auto;
+
+    background:var(--surface-color);
+
+    border-radius:var(--radius-md);
+
+    box-shadow:var(--shadow-sm);
+
+}
+
+
+/* ==========================================================
+   BASE TABLE
+========================================================== */
+
+.table{
+
+    width:100%;
+
+    margin-bottom:0;
+
+    border-collapse:collapse;
+
+    vertical-align:middle;
+
+}
+
+
+/* ==========================================================
+   TABLE HEADER
+========================================================== */
+
+.table thead{
+
+    background:var(--table-header-bg);
+
+}
+
+.table thead th{
+
+    color:var(--table-header-text);
+
+    font-size:var(--font-sm);
+
+    font-weight:var(--fw-semibold);
+
+    padding:16px;
+
+    border:none;
+
+    white-space:nowrap;
+
+    text-transform:uppercase;
+
+}
+
+
+/* ==========================================================
+   TABLE BODY
+========================================================== */
+
+.table tbody td{
+
+    padding:15px 16px;
+
+    border-bottom:1px solid var(--border-color);
+
+    color:var(--text-color);
+
+    vertical-align:middle;
+
+}
+
+
+/* ==========================================================
+   TABLE HOVER
+========================================================== */
+
+.table-hover tbody tr:hover{
+
+    background:var(--table-hover);
+
+}
+
+
+/* ==========================================================
+   TABLE STRIPED
+========================================================== */
+
+.table-striped tbody tr:nth-child(even){
+
+    background:#fafbfc;
+
+}
+
+
+/* ==========================================================
+   TABLE BORDERED
+========================================================== */
+
+.table-bordered{
+
+    border:1px solid var(--border-color);
+
+}
+
+.table-bordered th,
+
+.table-bordered td{
+
+    border:1px solid var(--border-color);
+
+}
+
+
+/* ==========================================================
+   TABLE RESPONSIVE
+========================================================== */
+
+.table-responsive{
+
+    overflow-x:auto;
+
+}
+
+
+/* ==========================================================
+   TABLE ACTIONS
+========================================================== */
+
+.table-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+}
+
+
+/* ==========================================================
+   TABLE STATUS
+========================================================== */
+
+.status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-size:var(--font-xs);
+
+    font-weight:var(--fw-semibold);
+
+}
+
+.status-active{
+
+    background:var(--success-light);
+
+    color:var(--success-color);
+
+}
+
+.status-inactive{
+
+    background:var(--danger-light);
+
+    color:var(--danger-color);
+
+}
+
+.status-pending{
+
+    background:var(--warning-light);
+
+    color:#856404;
+
+}
+
+.status-approved{
+
+    background:#d1ecf1;
+
+    color:#0c5460;
+
+}
+
+
+/* ==========================================================
+   TABLE IMAGE
+========================================================== */
+
+.table-avatar{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+
+/* ==========================================================
+   TABLE BADGE
+========================================================== */
+
+.table-badge{
+
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:15px;
+
+    font-size:.75rem;
+
+    font-weight:600;
+
+}
+
+
+/* ==========================================================
+   EMPTY TABLE
+========================================================== */
+
+.table-empty{
+
+    text-align:center;
+
+    padding:40px;
+
+    color:var(--text-muted);
+
+}
+
+
+/* ==========================================================
+   TABLE FOOTER
+========================================================== */
+
+.table-footer{
+
+    padding:15px 20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    border-top:1px solid var(--border-color);
+
+    background:#fafafa;
+
+}
+
+
+/* ==========================================================
+   SORT ICON
+========================================================== */
+
+.sort-icon{
+
+    margin-left:6px;
+
+    font-size:12px;
+
+    cursor:pointer;
+
+}
+
+
+/* ==========================================================
+   PAGINATION WRAPPER
+========================================================== */
+
+.pagination-wrapper{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+
+/* ==========================================================
+   SEARCH BAR
+========================================================== */
+
+.table-search{
+
+    max-width:320px;
+
+}
+
+
+/* ==========================================================
+   ROW HIGHLIGHT
+========================================================== */
+
+.row-selected{
+
+    background:#dbeafe !important;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:768px){
+
+    .table thead th{
+
+        padding:12px;
+
+        font-size:.80rem;
+
+    }
+
+    .table tbody td{
+
+        padding:12px;
+
+        font-size:.90rem;
+
+    }
+
+    .pagination-wrapper{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .table-search{
+
+        width:100%;
+
+        max-width:100%;
+
+    }
+
+}

@@ -1,0 +1,270 @@
+/* ==========================================================
+OBT AGENCY MANAGEMENT SYSTEM
+REPORTS PAGE
+CSS
+========================================================== */
+
+/* ==========================================================
+REPORT PAGE
+========================================================== */
+
+.report-filter-section,
+.report-result-section {
+width: 100%;
+}
+
+/* ==========================================================
+REPORT CARD
+========================================================== */
+
+.report-card {
+background: #ffffff;
+border-radius: 10px;
+padding: 24px;
+margin-bottom: 25px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* ==========================================================
+SECTION TITLE
+========================================================== */
+
+.report-card .section-title {
+margin-bottom: 20px;
+font-size: 20px;
+font-weight: 600;
+color: #333333;
+}
+
+/* ==========================================================
+FORM LABEL
+========================================================== */
+
+.report-card .form-label {
+font-weight: 600;
+color: #444444;
+margin-bottom: 7px;
+}
+
+/* ==========================================================
+FORM CONTROLS
+========================================================== */
+
+.report-card .form-control,
+.report-card .form-select {
+min-height: 42px;
+border: 1px solid #d8dee8;
+border-radius: 6px;
+box-shadow: none;
+}
+
+.report-card .form-control,
+.report-card .form-select {
+border-color: #0056a4;
+box-shadow: 0 0 0 0.15rem rgba(0, 86, 164, 0.12);
+}
+
+/* ==========================================================
+REPORT ACTIONS
+========================================================== */
+
+.report-actions {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.report-actions .btn {
+min-width: 150px;
+min-height: 42px;
+}
+
+/* ==========================================================
+REPORT HEADER
+========================================================== */
+
+.report-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+}
+
+.report-result-actions {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.report-result-actions .btn {
+min-height: 38px;
+}
+
+/* ==========================================================
+REPORT TABLE
+========================================================== */
+
+#reportTable {
+width: 100%;
+margin-bottom: 0;
+}
+
+#reportTable thead th {
+background: #0056a4;
+color: #ffffff;
+font-weight: 600;
+white-space: nowrap;
+vertical-align: middle;
+padding: 12px 10px;
+}
+
+#reportTable tbody td {
+padding: 11px 10px;
+vertical-align: middle;
+white-space: nowrap;
+}
+
+#reportTable tbody tr {
+background-color: #f7faff;
+}
+
+/* ==========================================================
+STATUS BADGES
+========================================================== */
+
+#reportTable .badge {
+padding: 6px 10px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 600;
+}
+
+/* ==========================================================
+REPORT ENTRY INFORMATION
+========================================================== */
+
+#reportEntryInfo {
+font-size: 13px;
+}
+
+/* ==========================================================
+EMPTY REPORT
+========================================================== */
+
+#reportTableBody .text-muted {
+padding: 30px 15px;
+}
+
+/* ==========================================================
+PRINT
+========================================================== */
+
+@media print {
+
+body {
+    background: #ffffff !important;
+}
+
+.top-header,
+.main-navigation,
+.report-filter-section,
+.report-result-actions,
+.footer {
+    display: none !important;
+}
+
+.main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.report-card {
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#reportTable {
+    width: 100% !important;
+}
+
+#reportTable thead th {
+    background: #0056a4 !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+}
+
+/* ==========================================================
+TABLET
+========================================================== */
+
+@media (max-width: 992px) {
+
+.report-header {
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.report-result-actions {
+    width: 100%;
+}
+
+}
+
+/* ==========================================================
+MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+.report-card {
+    padding: 18px;
+}
+
+.report-actions {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.report-actions .btn {
+    width: 100%;
+}
+
+.report-result-actions {
+    flex-wrap: wrap;
+}
+
+.report-result-actions .btn {
+    flex: 1;
+}
+
+}
+
+/* ==========================================================
+SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+.report-card {
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.report-card .section-title {
+    font-size: 18px;
+}
+
+.report-result-actions {
+    flex-direction: column;
+    width: 100%;
+}
+
+.report-result-actions .btn {
+    width: 100%;
+}
+
+}

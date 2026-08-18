@@ -1,0 +1,442 @@
+/* ==========================================================
+   OBT Agency Management System
+   Forms
+   Author : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   FORM GROUP
+========================================================== */
+
+.form-group{
+
+    margin-bottom:1.5rem;
+
+}
+
+
+/* ==========================================================
+   FORM LABEL
+========================================================== */
+
+.form-label{
+
+    display:inline-block;
+
+    margin-bottom:.5rem;
+
+    font-size:var(--font-sm);
+
+    font-weight:var(--fw-semibold);
+
+    color:var(--text-color);
+
+}
+
+
+/* ==========================================================
+   REQUIRED
+========================================================== */
+
+.form-label .required{
+
+    color:var(--danger-color);
+
+    margin-left:3px;
+
+}
+
+
+/* ==========================================================
+   FORM CONTROL
+========================================================== */
+
+.form-control,
+
+.form-select{
+
+    width:100%;
+
+    height:var(--input-height);
+
+    padding:0 .875rem;
+
+    border:1px solid var(--input-border);
+
+    border-radius:var(--radius-sm);
+
+    background:var(--input-bg);
+
+    color:var(--text-color);
+
+    font-size:var(--font-md);
+
+    transition:var(--transition-normal);
+
+}
+
+
+/* ==========================================================
+   TEXTAREA
+========================================================== */
+
+textarea.form-control{
+
+    min-height:120px;
+
+    padding:.75rem .875rem;
+
+    resize:vertical;
+
+}
+
+
+/* ==========================================================
+   PLACEHOLDER
+========================================================== */
+
+.form-control::placeholder,
+
+textarea::placeholder{
+
+    color:var(--input-placeholder);
+
+}
+
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+.form-control:focus,
+
+.form-select:focus,
+
+textarea:focus{
+
+    border-color:var(--primary-color);
+
+    box-shadow:0 0 0 .2rem rgba(0,91,170,.15);
+
+    outline:none;
+
+}
+
+
+/* ==========================================================
+   READONLY
+========================================================== */
+
+.form-control:read-only{
+
+    background:#f8f9fa;
+
+}
+
+
+/* ==========================================================
+   DISABLED
+========================================================== */
+
+.form-control:disabled,
+
+.form-select:disabled,
+
+textarea:disabled{
+
+    background:#e9ecef;
+
+    cursor:not-allowed;
+
+    opacity:.8;
+
+}
+
+
+/* ==========================================================
+   INPUT GROUP
+========================================================== */
+
+.input-group{
+
+    display:flex;
+
+    align-items:stretch;
+
+}
+
+
+.input-group-text{
+
+    min-width:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:var(--primary-light);
+
+    border:1px solid var(--input-border);
+
+    color:var(--primary-color);
+
+}
+
+
+/* ==========================================================
+   PASSWORD TOGGLE
+========================================================== */
+
+.toggle-password{
+
+    cursor:pointer;
+
+    background:var(--white);
+
+    transition:var(--transition-fast);
+
+}
+
+.toggle-password:hover{
+
+    background:var(--primary-light);
+
+}
+
+
+/* ==========================================================
+   CHECKBOX
+========================================================== */
+
+.form-check{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+
+.form-check-input{
+
+    width:18px;
+
+    height:18px;
+
+    cursor:pointer;
+
+}
+
+
+.form-check-input:checked{
+
+    background-color:var(--primary-color);
+
+    border-color:var(--primary-color);
+
+}
+
+
+.form-check-label{
+
+    cursor:pointer;
+
+    color:var(--text-color);
+
+    font-size:var(--font-sm);
+
+}
+
+
+/* ==========================================================
+   RADIO
+========================================================== */
+
+.form-check-input[type="radio"]{
+
+    border-radius:50%;
+
+}
+
+
+/* ==========================================================
+   VALIDATION
+========================================================== */
+
+.is-valid{
+
+    border-color:var(--success-color) !important;
+
+}
+
+.is-invalid{
+
+    border-color:var(--danger-color) !important;
+
+}
+
+.valid-feedback{
+
+    display:block;
+
+    color:var(--success-color);
+
+    font-size:var(--font-sm);
+
+    margin-top:5px;
+
+}
+
+.invalid-feedback{
+
+    display:block;
+
+    color:var(--danger-color);
+
+    font-size:var(--font-sm);
+
+    margin-top:5px;
+
+}
+
+
+/* ==========================================================
+   SEARCH BOX
+========================================================== */
+
+.search-box{
+
+    position:relative;
+
+}
+
+
+.search-box .form-control{
+
+    padding-left:45px;
+
+}
+
+
+.search-box i{
+
+    position:absolute;
+
+    left:15px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:var(--text-muted);
+
+}
+
+
+/* ==========================================================
+   FILE INPUT
+========================================================== */
+
+.form-control[type="file"]{
+
+    padding:.55rem .75rem;
+
+}
+
+
+/* ==========================================================
+   FORM TEXT
+========================================================== */
+
+.form-text{
+
+    font-size:var(--font-sm);
+
+    color:var(--text-muted);
+
+    margin-top:5px;
+
+}
+
+
+/* ==========================================================
+   FORM SECTION
+========================================================== */
+
+.form-section{
+
+    margin-bottom:2rem;
+
+}
+
+
+/* ==========================================================
+   FORM ACTIONS
+========================================================== */
+
+.form-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:15px;
+
+    margin-top:30px;
+
+}
+
+
+/* ==========================================================
+   LOGIN FORM
+========================================================== */
+
+.login-form{
+
+    width:100%;
+
+}
+
+
+/* ==========================================================
+   FILTER FORM
+========================================================== */
+
+.filter-form{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+    align-items:end;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:768px){
+
+    .form-actions{
+
+        flex-direction:column;
+
+    }
+
+    .filter-form{
+
+        flex-direction:column;
+
+    }
+
+}

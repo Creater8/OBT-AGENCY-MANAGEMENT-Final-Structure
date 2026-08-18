@@ -1,0 +1,531 @@
+/* ==========================================================
+   OBT AGENCY MANAGEMENT SYSTEM
+   Utility Classes
+
+   Author  : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   DISPLAY
+========================================================== */
+
+.d-block {
+    display: block !important;
+}
+
+.d-inline-block {
+    display: inline-block !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.d-inline-flex {
+    display: inline-flex !important;
+}
+
+.d-grid {
+    display: grid !important;
+}
+
+.d-none {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   FLEX DIRECTION
+========================================================== */
+
+.flex-row {
+    flex-direction: row !important;
+}
+
+.flex-column {
+    flex-direction: column !important;
+}
+
+.flex-wrap {
+    flex-wrap: wrap !important;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap !important;
+}
+
+
+/* ==========================================================
+   JUSTIFY CONTENT
+========================================================== */
+
+.justify-start {
+    justify-content: flex-start !important;
+}
+
+.justify-center {
+    justify-content: center !important;
+}
+
+.justify-end {
+    justify-content: flex-end !important;
+}
+
+.justify-between {
+    justify-content: space-between !important;
+}
+
+.justify-around {
+    justify-content: space-around !important;
+}
+
+
+/* ==========================================================
+   ALIGN ITEMS
+========================================================== */
+
+.align-start {
+    align-items: flex-start !important;
+}
+
+.align-center {
+    align-items: center !important;
+}
+
+.align-end {
+    align-items: flex-end !important;
+}
+
+
+/* ==========================================================
+   WIDTH
+========================================================== */
+
+.w-25 {
+    width: 25% !important;
+}
+
+.w-50 {
+    width: 50% !important;
+}
+
+.w-75 {
+    width: 75% !important;
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
+.w-auto {
+    width: auto !important;
+}
+
+
+/* ==========================================================
+   HEIGHT
+========================================================== */
+
+.h-25 {
+    height: 25% !important;
+}
+
+.h-50 {
+    height: 50% !important;
+}
+
+.h-75 {
+    height: 75% !important;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+.h-auto {
+    height: auto !important;
+}
+
+
+/* ==========================================================
+   MARGIN
+========================================================== */
+
+.m-0 {
+    margin: 0 !important;
+}
+
+.mt-1 {
+    margin-top: 5px !important;
+}
+
+.mt-2 {
+    margin-top: 10px !important;
+}
+
+.mt-3 {
+    margin-top: 15px !important;
+}
+
+.mt-4 {
+    margin-top: 20px !important;
+}
+
+.mt-5 {
+    margin-top: 30px !important;
+}
+
+.mb-1 {
+    margin-bottom: 5px !important;
+}
+
+.mb-2 {
+    margin-bottom: 10px !important;
+}
+
+.mb-3 {
+    margin-bottom: 15px !important;
+}
+
+.mb-4 {
+    margin-bottom: 20px !important;
+}
+
+.mb-5 {
+    margin-bottom: 30px !important;
+}
+
+.ms-1 {
+    margin-left: 5px !important;
+}
+
+.ms-2 {
+    margin-left: 10px !important;
+}
+
+.ms-3 {
+    margin-left: 15px !important;
+}
+
+.ms-4 {
+    margin-left: 20px !important;
+}
+
+.ms-5 {
+    margin-left: 30px !important;
+}
+
+.me-1 {
+    margin-right: 5px !important;
+}
+
+.me-2 {
+    margin-right: 10px !important;
+}
+
+.me-3 {
+    margin-right: 15px !important;
+}
+
+.me-4 {
+    margin-right: 20px !important;
+}
+
+.me-5 {
+    margin-right: 30px !important;
+}
+
+
+/* ==========================================================
+   PADDING
+========================================================== */
+
+.p-0 {
+    padding: 0 !important;
+}
+
+.pt-1 {
+    padding-top: 5px !important;
+}
+
+.pt-2 {
+    padding-top: 10px !important;
+}
+
+.pt-3 {
+    padding-top: 15px !important;
+}
+
+.pt-4 {
+    padding-top: 20px !important;
+}
+
+.pt-5 {
+    padding-top: 30px !important;
+}
+
+.pb-1 {
+    padding-bottom: 5px !important;
+}
+
+.pb-2 {
+    padding-bottom: 10px !important;
+}
+
+.pb-3 {
+    padding-bottom: 15px !important;
+}
+
+.pb-4 {
+    padding-bottom: 20px !important;
+}
+
+.pb-5 {
+    padding-bottom: 30px !important;
+}
+
+.ps-1 {
+    padding-left: 5px !important;
+}
+
+.ps-2 {
+    padding-left: 10px !important;
+}
+
+.ps-3 {
+    padding-left: 15px !important;
+}
+
+.ps-4 {
+    padding-left: 20px !important;
+}
+
+.ps-5 {
+    padding-left: 30px !important;
+}
+
+.pe-1 {
+    padding-right: 5px !important;
+}
+
+.pe-2 {
+    padding-right: 10px !important;
+}
+
+.pe-3 {
+    padding-right: 15px !important;
+}
+
+.pe-4 {
+    padding-right: 20px !important;
+}
+
+.pe-5 {
+    padding-right: 30px !important;
+}
+
+
+/* ==========================================================
+   BORDER RADIUS
+========================================================== */
+
+.rounded-sm {
+    border-radius: var(--radius-sm) !important;
+}
+
+.rounded-md {
+    border-radius: var(--radius-md) !important;
+}
+
+.rounded-lg {
+    border-radius: var(--radius-lg) !important;
+}
+
+.rounded-circle {
+    border-radius: var(--radius-round) !important;
+}
+
+
+/* ==========================================================
+   SHADOWS
+========================================================== */
+
+.shadow-sm {
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.shadow-md {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.shadow-lg {
+    box-shadow: var(--shadow-lg) !important;
+}
+
+
+/* ==========================================================
+   OVERFLOW
+========================================================== */
+
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
+.overflow-auto {
+    overflow: auto !important;
+}
+
+
+/* ==========================================================
+   POSITION
+========================================================== */
+
+.position-relative {
+    position: relative !important;
+}
+
+.position-absolute {
+    position: absolute !important;
+}
+
+.position-fixed {
+    position: fixed !important;
+}
+
+.position-sticky {
+    position: sticky !important;
+}
+
+
+/* ==========================================================
+   CURSOR
+========================================================== */
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.cursor-default {
+    cursor: default !important;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+
+/* ==========================================================
+   VISIBILITY
+========================================================== */
+
+.visible {
+    visibility: visible !important;
+}
+
+.invisible {
+    visibility: hidden !important;
+}
+
+
+/* ==========================================================
+   BACKGROUND COLORS
+========================================================== */
+
+.bg-primary-custom {
+    background: var(--primary-color) !important;
+}
+
+.bg-success-custom {
+    background: var(--success-color) !important;
+}
+
+.bg-danger-custom {
+    background: var(--danger-color) !important;
+}
+
+.bg-warning-custom {
+    background: var(--warning-color) !important;
+}
+
+.bg-white-custom {
+    background: var(--white) !important;
+}
+
+
+/* ==========================================================
+   BORDER
+========================================================== */
+
+.border {
+    border: 1px solid var(--border-color) !important;
+}
+
+.border-0 {
+    border: none !important;
+}
+
+
+/* ==========================================================
+   TRANSITION
+========================================================== */
+
+.transition {
+    transition: var(--transition-normal) !important;
+}
+
+
+/* ==========================================================
+   OPACITY
+========================================================== */
+
+.opacity-0 {
+    opacity: 0 !important;
+}
+
+.opacity-25 {
+    opacity: .25 !important;
+}
+
+.opacity-50 {
+    opacity: .50 !important;
+}
+
+.opacity-75 {
+    opacity: .75 !important;
+}
+
+.opacity-100 {
+    opacity: 1 !important;
+}
+
+
+/* ==========================================================
+   Z-INDEX
+========================================================== */
+
+.z-dropdown {
+    z-index: var(--z-dropdown) !important;
+}
+
+.z-fixed {
+    z-index: var(--z-fixed) !important;
+}
+
+.z-modal {
+    z-index: var(--z-modal) !important;
+}
+
+
+/* ==========================================================
+   POINTER EVENTS
+========================================================== */
+
+.pe-none {
+    pointer-events: none !important;
+}
+
+.pe-auto {
+    pointer-events: auto !important;
+}

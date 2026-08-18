@@ -1,0 +1,380 @@
+/* ==========================================================
+   OBT AGENCY MANAGEMENT SYSTEM
+   Layout Styles
+
+   Author  : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   APPLICATION WRAPPER
+========================================================== */
+
+.app-wrapper {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: var(--background-color);
+
+}
+
+
+/* ==========================================================
+   MAIN CONTENT
+========================================================== */
+
+.main-content {
+
+    flex: 1;
+
+    padding: 28px 35px 30px;
+
+    background: #f5f7fb;
+
+}
+
+
+/* ==========================================================
+   PAGE CONTAINER
+========================================================== */
+
+.page-container {
+
+    width: 100%;
+
+    margin: 0 auto;
+
+}
+
+
+/* ==========================================================
+   PAGE HEADER
+========================================================== */
+
+.page-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+}
+
+
+/* ==========================================================
+   PAGE BODY
+========================================================== */
+
+.page-body {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   BREADCRUMB WRAPPER
+========================================================== */
+
+.breadcrumb-wrapper {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* ==========================================================
+   BREADCRUMB
+========================================================== */
+
+.breadcrumb {
+
+    margin: 0;
+
+    background: transparent;
+
+}
+
+
+/* ==========================================================
+   CONTENT SECTION
+========================================================== */
+
+.content-section {
+
+    margin-bottom: 30px;
+
+}
+
+
+/* ==========================================================
+   CONTENT ROW
+========================================================== */
+
+.content-row {
+
+    margin-bottom: 25px;
+
+}
+
+
+/* ==========================================================
+   CONTENT CARD WRAPPER
+========================================================== */
+
+.content-card {
+
+    margin-bottom: 25px;
+
+}
+
+
+/* ==========================================================
+   DASHBOARD GRID
+========================================================== */
+
+.dashboard-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+
+    gap: 25px;
+
+}
+
+
+/* ==========================================================
+   REPORT GRID
+========================================================== */
+
+.report-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(320px, 1fr));
+
+    gap: 25px;
+
+}
+
+
+/* ==========================================================
+   FLEX HELPERS
+========================================================== */
+
+.flex-between {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.flex-center {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+.flex-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* ==========================================================
+   LOADER OVERLAY
+========================================================== */
+
+.loader-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(255, 255, 255, 0.75);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 9999;
+
+}
+
+
+/* ==========================================================
+   MODAL OVERRIDE
+========================================================== */
+
+.modal-content {
+
+    border: none;
+
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-lg);
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE LAYOUT
+========================================================== */
+
+
+/* ----------------------------------------------------------
+   LARGE DESKTOP
+   1400px AND ABOVE
+---------------------------------------------------------- */
+
+@media (min-width: 1400px) {
+
+    .main-content {
+
+        padding-left: 35px;
+
+        padding-right: 35px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   DESKTOP
+   1200px - 1399px
+---------------------------------------------------------- */
+
+@media (max-width: 1399px) {
+
+    .main-content {
+
+        padding-left: 30px;
+
+        padding-right: 30px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   LAPTOP
+   992px - 1199px
+---------------------------------------------------------- */
+
+@media (max-width: 1199px) {
+
+    .main-content {
+
+        padding: 25px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   TABLET
+   768px - 991px
+---------------------------------------------------------- */
+
+@media (max-width: 991px) {
+
+    .main-content {
+
+        padding: 22px 20px;
+
+    }
+
+
+    .page-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .dashboard-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .report-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   MOBILE
+   576px - 767px
+---------------------------------------------------------- */
+
+@media (max-width: 767px) {
+
+    .main-content {
+
+        padding: 20px 15px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   SMALL MOBILE
+   BELOW 576px
+---------------------------------------------------------- */
+
+@media (max-width: 575px) {
+
+    .main-content {
+
+        padding: 18px 12px;
+
+    }
+
+}

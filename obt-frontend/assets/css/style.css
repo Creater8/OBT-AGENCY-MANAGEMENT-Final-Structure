@@ -1,0 +1,721 @@
+/* ==========================================================
+   OBT AGENCY MANAGEMENT SYSTEM
+   Global Styles
+
+   Author  : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   CSS RESET
+========================================================== */
+
+*,
+*::before,
+*::after {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+/* ==========================================================
+   HTML
+========================================================== */
+
+html {
+
+    font-size: 16px;
+
+    scroll-behavior: smooth;
+
+}
+
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+body {
+
+    min-height: 100vh;
+
+    font-family: var(--font-family-base);
+
+    font-size: var(--font-md);
+
+    font-weight: var(--fw-normal);
+
+    line-height: var(--line-height-md);
+
+    background: var(--background-color);
+
+    color: var(--text-color);
+
+    overflow-x: hidden;
+
+    -webkit-font-smoothing: antialiased;
+
+    -moz-osx-font-smoothing: grayscale;
+
+}
+
+
+/* ==========================================================
+   TEXT SELECTION
+========================================================== */
+
+::selection {
+
+    background: var(--primary-color);
+
+    color: var(--white);
+
+}
+
+
+/* ==========================================================
+   HEADINGS
+========================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    margin: 0;
+
+    font-weight: var(--fw-bold);
+
+    color: var(--text-color);
+
+    line-height: 1.3;
+
+}
+
+
+/* ==========================================================
+   PARAGRAPHS
+========================================================== */
+
+p {
+
+    margin: 0;
+
+    color: var(--text-light);
+
+}
+
+
+/* ==========================================================
+   LINKS
+========================================================== */
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+
+    transition: var(--transition-fast);
+
+}
+
+a:hover {
+
+    text-decoration: none;
+
+}
+
+
+/* ==========================================================
+   IMAGES
+========================================================== */
+
+img {
+
+    max-width: 100%;
+
+    height: auto;
+
+    display: block;
+
+}
+
+
+/* ==========================================================
+   LISTS
+========================================================== */
+
+ul,
+ol {
+
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+
+}
+
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+button {
+
+    border: none;
+
+    background: none;
+
+    outline: none;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+}
+
+
+/* ==========================================================
+   FORM ELEMENTS
+========================================================== */
+
+input,
+textarea,
+select {
+
+    font-family: inherit;
+
+    outline: none;
+
+}
+
+
+/* ==========================================================
+   TABLES
+========================================================== */
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+}
+
+
+/* ==========================================================
+   HORIZONTAL RULE
+========================================================== */
+
+hr {
+
+    border: none;
+
+    border-top: 1px solid var(--border-color);
+
+    margin: 1rem 0;
+
+}
+
+
+/* ==========================================================
+   IFRAME
+========================================================== */
+
+iframe {
+
+    border: 0;
+
+}
+
+
+/* ==========================================================
+   SVG
+========================================================== */
+
+svg {
+
+    vertical-align: middle;
+
+}
+
+
+/* ==========================================================
+   CODE
+========================================================== */
+
+code {
+
+    font-family: Consolas, monospace;
+
+}
+
+
+/* ==========================================================
+   CONTAINER
+========================================================== */
+
+.container,
+.container-fluid {
+
+    position: relative;
+
+}
+
+
+/* ==========================================================
+   BOOTSTRAP OVERRIDES
+========================================================== */
+
+.form-control:focus,
+.form-select:focus {
+
+    box-shadow: none;
+
+}
+
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+
+::-webkit-scrollbar {
+
+    width: 10px;
+
+    height: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: #edf2f7;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: var(--primary-color);
+
+    border-radius: 20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: var(--primary-hover);
+
+}
+
+
+/* ==========================================================
+   PLACEHOLDER
+========================================================== */
+
+::placeholder {
+
+    color: var(--input-placeholder);
+
+    opacity: 1;
+
+}
+
+
+/* ==========================================================
+   DISABLED ELEMENTS
+========================================================== */
+
+:disabled {
+
+    cursor: not-allowed;
+
+}
+
+
+/* ==========================================================
+   GLOBAL FOCUS
+========================================================== */
+
+:focus {
+
+    outline: none;
+
+}
+
+
+/* ==========================================================
+   APPLICATION HEADER
+========================================================== */
+
+.top-header {
+
+    width: 100%;
+
+    height: 75px;
+
+    background: var(--header-bg);
+
+    color: var(--header-text);
+
+    display: flex;
+
+    align-items: center;
+
+    flex-shrink: 0;
+
+    box-shadow: none;
+
+}
+
+
+/* ==========================================================
+   HEADER CONTAINER
+========================================================== */
+
+.top-header .container-fluid {
+
+    width: 100%;
+
+    height: 100%;
+
+}
+
+
+/* ==========================================================
+   HEADER CONTENT
+========================================================== */
+
+.header-content {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+/* ==========================================================
+   BRAND SECTION
+========================================================== */
+
+.brand-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+}
+
+
+/* ==========================================================
+   HEADER LOGO
+========================================================== */
+
+.logo {
+
+    width: 58px;
+
+    height: 58px;
+
+    object-fit: contain;
+
+    display: block;
+
+    flex-shrink: 0;
+
+}
+
+
+/* ==========================================================
+   BRAND TEXT
+========================================================== */
+
+.brand-text {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+}
+
+
+.system-title {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 1.55rem;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+}
+
+
+.system-subtitle {
+
+    margin: 3px 0 0;
+
+    color: rgba(255, 255, 255, 0.95);
+
+    font-size: 0.85rem;
+
+    line-height: 1.2;
+
+}
+
+
+/* ==========================================================
+   HEADER USER SECTION
+========================================================== */
+
+.header-user-section {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-shrink: 0;
+
+}
+
+
+/* ==========================================================
+   USER PROFILE
+========================================================== */
+
+.user-profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 7px 12px;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    user-select: none;
+
+}
+
+
+/* ==========================================================
+   USER AVATAR
+========================================================== */
+
+.user-avatar {
+
+    width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.18);
+
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+}
+
+
+.user-avatar i {
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+}
+
+
+/* ==========================================================
+   USER NAME
+========================================================== */
+
+.user-name {
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+}
+
+
+/* ==========================================================
+   USER DROPDOWN ICON
+========================================================== */
+
+.user-dropdown-icon {
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+}
+
+
+/* ==========================================================
+   MAIN NAVIGATION
+========================================================== */
+
+.main-navigation {
+
+    width: 100%;
+
+    min-height: 52px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e1e5eb;
+
+    flex-shrink: 0;
+
+}
+
+
+/* ==========================================================
+   NAVIGATION CONTENT
+========================================================== */
+
+.navigation-content {
+
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0;
+
+}
+
+
+/* ==========================================================
+   NAVIGATION ITEM
+========================================================== */
+
+.nav-item {
+
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 0 22px;
+
+    color: #4b5563;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    border-bottom: 3px solid transparent;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.nav-item i {
+
+    font-size: 15px;
+
+}
+
+
+/* ==========================================================
+   NAVIGATION HOVER
+========================================================== */
+
+.nav-item:hover {
+
+    color: var(--primary-color);
+
+    background: #f7faff;
+
+}
+
+
+/* ==========================================================
+   NAVIGATION ACTIVE
+========================================================== */
+
+.nav-item.active {
+
+    color: var(--primary-color);
+
+    border-bottom-color: var(--primary-color);
+
+    background: #f7faff;
+
+}
+
+
+/* ==========================================================
+   GLOBAL FOOTER
+========================================================== */
+
+.footer {
+
+    background: var(--primary-color);
+
+    color: var(--white);
+
+    padding: 15px 0;
+
+    text-align: center;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+}
+
+
+.footer p {
+
+    margin: 0;
+
+    color: var(--white);
+
+    opacity: 1;
+
+}

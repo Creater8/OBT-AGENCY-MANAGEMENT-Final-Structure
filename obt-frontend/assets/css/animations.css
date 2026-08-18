@@ -1,0 +1,588 @@
+/* ==========================================================
+   OBT Agency Management System
+   Animations
+   Author : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   FADE IN
+========================================================== */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+.fade-in{
+
+    animation:fadeIn .5s ease-in-out;
+
+}
+
+
+/* ==========================================================
+   FADE UP
+========================================================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.fade-up{
+
+    animation:fadeUp .6s ease;
+
+}
+
+
+/* ==========================================================
+   FADE DOWN
+========================================================== */
+
+@keyframes fadeDown{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.fade-down{
+
+    animation:fadeDown .6s ease;
+
+}
+
+
+/* ==========================================================
+   FADE LEFT
+========================================================== */
+
+@keyframes fadeLeft{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(-30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+.fade-left{
+
+    animation:fadeLeft .6s ease;
+
+}
+
+
+/* ==========================================================
+   FADE RIGHT
+========================================================== */
+
+@keyframes fadeRight{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+.fade-right{
+
+    animation:fadeRight .6s ease;
+
+}
+
+
+/* ==========================================================
+   ZOOM IN
+========================================================== */
+
+@keyframes zoomIn{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.85);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+.zoom-in{
+
+    animation:zoomIn .4s ease;
+
+}
+
+
+/* ==========================================================
+   ZOOM OUT
+========================================================== */
+
+@keyframes zoomOut{
+
+    from{
+
+        transform:scale(1.1);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+}
+
+.zoom-out{
+
+    animation:zoomOut .4s ease;
+
+}
+
+
+/* ==========================================================
+   SLIDE DOWN
+========================================================== */
+
+@keyframes slideDown{
+
+    from{
+
+        max-height:0;
+
+        opacity:0;
+
+    }
+
+    to{
+
+        max-height:500px;
+
+        opacity:1;
+
+    }
+
+}
+
+.slide-down{
+
+    animation:slideDown .35s ease forwards;
+
+}
+
+
+/* ==========================================================
+   SLIDE UP
+========================================================== */
+
+@keyframes slideUp{
+
+    from{
+
+        max-height:500px;
+
+        opacity:1;
+
+    }
+
+    to{
+
+        max-height:0;
+
+        opacity:0;
+
+    }
+
+}
+
+.slide-up{
+
+    animation:slideUp .35s ease forwards;
+
+}
+
+
+/* ==========================================================
+   SPIN
+========================================================== */
+
+@keyframes spin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+.spin{
+
+    animation:spin 1s linear infinite;
+
+}
+
+
+/* ==========================================================
+   PULSE
+========================================================== */
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.05);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+.pulse{
+
+    animation:pulse 1.2s infinite;
+
+}
+
+
+/* ==========================================================
+   SHAKE
+========================================================== */
+
+@keyframes shake{
+
+    0%,100%{
+
+        transform:translateX(0);
+
+    }
+
+    20%{
+
+        transform:translateX(-6px);
+
+    }
+
+    40%{
+
+        transform:translateX(6px);
+
+    }
+
+    60%{
+
+        transform:translateX(-6px);
+
+    }
+
+    80%{
+
+        transform:translateX(6px);
+
+    }
+
+}
+
+.shake{
+
+    animation:shake .45s;
+
+}
+
+
+/* ==========================================================
+   BOUNCE
+========================================================== */
+
+@keyframes bounce{
+
+    0%,20%,50%,80%,100%{
+
+        transform:translateY(0);
+
+    }
+
+    40%{
+
+        transform:translateY(-12px);
+
+    }
+
+    60%{
+
+        transform:translateY(-6px);
+
+    }
+
+}
+
+.bounce{
+
+    animation:bounce 1s;
+
+}
+
+
+/* ==========================================================
+   LOADER
+========================================================== */
+
+@keyframes loader{
+
+    0%{
+
+        transform:rotate(0deg);
+
+    }
+
+    100%{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+.loader{
+
+    width:50px;
+
+    height:50px;
+
+    border:5px solid #e9ecef;
+
+    border-top:5px solid var(--primary-color);
+
+    border-radius:50%;
+
+    animation:loader .8s linear infinite;
+
+}
+
+
+/* ==========================================================
+   RIPPLE EFFECT
+========================================================== */
+
+@keyframes ripple{
+
+    from{
+
+        transform:scale(.3);
+
+        opacity:1;
+
+    }
+
+    to{
+
+        transform:scale(2.5);
+
+        opacity:0;
+
+    }
+
+}
+
+.ripple{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+/* ==========================================================
+   CARD HOVER
+========================================================== */
+
+.card-hover{
+
+    transition:transform .3s ease, box-shadow .3s ease;
+
+}
+
+.card-hover:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:var(--shadow-lg);
+
+}
+
+
+/* ==========================================================
+   BUTTON HOVER
+========================================================== */
+
+.btn-hover{
+
+    transition:all .3s ease;
+
+}
+
+.btn-hover:hover{
+
+    transform:translateY(-2px);
+
+}
+
+
+/* ==========================================================
+   ICON ROTATE
+========================================================== */
+
+.icon-rotate{
+
+    transition:.3s;
+
+}
+
+.icon-rotate:hover{
+
+    transform:rotate(180deg);
+
+}
+
+
+/* ==========================================================
+   SMOOTH TRANSITION
+========================================================== */
+
+.smooth{
+
+    transition:all .3s ease;
+
+}
+
+
+/* ==========================================================
+   DELAY CLASSES
+========================================================== */
+
+.delay-1{
+
+    animation-delay:.1s;
+
+}
+
+.delay-2{
+
+    animation-delay:.2s;
+
+}
+
+.delay-3{
+
+    animation-delay:.3s;
+
+}
+
+.delay-4{
+
+    animation-delay:.4s;
+
+}
+
+.delay-5{
+
+    animation-delay:.5s;
+
+}

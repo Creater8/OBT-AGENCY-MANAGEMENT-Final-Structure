@@ -1,0 +1,471 @@
+/* ==========================================================
+   OBT Agency Management System
+   Buttons
+   Author : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   BASE BUTTON
+========================================================== */
+
+.btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    min-height:48px;
+
+    padding:0 24px;
+
+    border:1px solid transparent;
+
+    border-radius:var(--radius-sm);
+
+    font-size:var(--font-md);
+
+    font-weight:var(--fw-semibold);
+
+    line-height:1;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:all var(--transition-normal);
+
+    user-select:none;
+
+    white-space:nowrap;
+
+}
+
+
+/* ==========================================================
+   PRIMARY BUTTON
+========================================================== */
+
+.btn-primary{
+
+    background:var(--primary-color);
+
+    border-color:var(--primary-color);
+
+    color:var(--white);
+
+}
+
+.btn-primary:hover{
+
+    background:var(--primary-hover);
+
+    border-color:var(--primary-hover);
+
+    color:var(--white);
+
+    transform:translateY(-2px);
+
+    box-shadow:var(--shadow-md);
+
+}
+
+.btn-primary:active{
+
+    transform:translateY(0);
+
+}
+
+
+/* ==========================================================
+   SECONDARY BUTTON
+========================================================== */
+
+.btn-secondary{
+
+    background:var(--secondary-color);
+
+    border-color:var(--secondary-color);
+
+    color:var(--white);
+
+}
+
+.btn-secondary:hover{
+
+    background:var(--secondary-hover);
+
+    border-color:var(--secondary-hover);
+
+    color:var(--white);
+
+}
+
+
+/* ==========================================================
+   SUCCESS BUTTON
+========================================================== */
+
+.btn-success{
+
+    background:var(--success-color);
+
+    border-color:var(--success-color);
+
+    color:var(--white);
+
+}
+
+.btn-success:hover{
+
+    filter:brightness(.92);
+
+    color:var(--white);
+
+}
+
+
+/* ==========================================================
+   DANGER BUTTON
+========================================================== */
+
+.btn-danger{
+
+    background:var(--danger-color);
+
+    border-color:var(--danger-color);
+
+    color:var(--white);
+
+}
+
+.btn-danger:hover{
+
+    filter:brightness(.92);
+
+    color:var(--white);
+
+}
+
+
+/* ==========================================================
+   WARNING BUTTON
+========================================================== */
+
+.btn-warning{
+
+    background:var(--warning-color);
+
+    border-color:var(--warning-color);
+
+    color:var(--black);
+
+}
+
+.btn-warning:hover{
+
+    filter:brightness(.95);
+
+}
+
+
+/* ==========================================================
+   INFO BUTTON
+========================================================== */
+
+.btn-info{
+
+    background:var(--info-color);
+
+    border-color:var(--info-color);
+
+    color:var(--white);
+
+}
+
+.btn-info:hover{
+
+    filter:brightness(.92);
+
+}
+
+
+/* ==========================================================
+   OUTLINE PRIMARY
+========================================================== */
+
+.btn-outline-primary{
+
+    background:transparent;
+
+    border-color:var(--primary-color);
+
+    color:var(--primary-color);
+
+}
+
+.btn-outline-primary:hover{
+
+    background:var(--primary-color);
+
+    color:var(--white);
+
+}
+
+
+/* ==========================================================
+   OUTLINE SECONDARY
+========================================================== */
+
+.btn-outline-secondary{
+
+    background:transparent;
+
+    border-color:var(--secondary-color);
+
+    color:var(--secondary-color);
+
+}
+
+.btn-outline-secondary:hover{
+
+    background:var(--secondary-color);
+
+    color:var(--white);
+
+}
+
+
+/* ==========================================================
+   ICON BUTTON
+========================================================== */
+
+.btn-icon{
+
+    width:42px;
+
+    height:42px;
+
+    padding:0;
+
+    border-radius:50%;
+
+}
+
+
+/* ==========================================================
+   BUTTON SIZES
+========================================================== */
+
+.btn-sm{
+
+    min-height:36px;
+
+    padding:0 16px;
+
+    font-size:var(--font-sm);
+
+}
+
+.btn-lg{
+
+    min-height:56px;
+
+    padding:0 32px;
+
+    font-size:var(--font-lg);
+
+}
+
+
+/* ==========================================================
+   FULL WIDTH
+========================================================== */
+
+.btn-block{
+
+    width:100%;
+
+}
+
+
+/* ==========================================================
+   DISABLED
+========================================================== */
+
+.btn:disabled,
+
+.btn.disabled{
+
+    opacity:.65;
+
+    cursor:not-allowed;
+
+    pointer-events:none;
+
+    transform:none;
+
+    box-shadow:none;
+
+}
+
+
+/* ==========================================================
+   LOADING BUTTON
+========================================================== */
+
+.btn-loading{
+
+    pointer-events:none;
+
+    opacity:.8;
+
+}
+
+.btn-loading::before{
+
+    content:"";
+
+    width:16px;
+
+    height:16px;
+
+    border:2px solid rgba(255,255,255,.35);
+
+    border-top-color:var(--white);
+
+    border-radius:50%;
+
+    animation:buttonSpinner .7s linear infinite;
+
+}
+
+
+/* ==========================================================
+   BUTTON GROUP
+========================================================== */
+
+.btn-group-custom{
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+}
+
+
+/* ==========================================================
+   FLOATING ACTION BUTTON
+========================================================== */
+
+.btn-fab{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    position:fixed;
+
+    right:30px;
+
+    bottom:30px;
+
+    z-index:1000;
+
+    box-shadow:var(--shadow-lg);
+
+}
+
+
+/* ==========================================================
+   ACTION BUTTONS
+========================================================== */
+
+.btn-edit{
+
+    background:#0d6efd;
+
+    color:#ffffff;
+
+}
+
+.btn-view{
+
+    background:#20c997;
+
+    color:#ffffff;
+
+}
+
+.btn-delete{
+
+    background:#dc3545;
+
+    color:#ffffff;
+
+}
+
+.btn-print{
+
+    background:#6f42c1;
+
+    color:#ffffff;
+
+}
+
+.btn-download{
+
+    background:#198754;
+
+    color:#ffffff;
+
+}
+
+
+/* ==========================================================
+   HOVER EFFECT
+========================================================== */
+
+.btn-edit:hover,
+
+.btn-view:hover,
+
+.btn-delete:hover,
+
+.btn-print:hover,
+
+.btn-download:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:var(--shadow-md);
+
+    filter:brightness(.95);
+
+    color:#ffffff;
+
+}
+
+
+/* ==========================================================
+   BUTTON SPINNER
+========================================================== */
+
+@keyframes buttonSpinner{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}

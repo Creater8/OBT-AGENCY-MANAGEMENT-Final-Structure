@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Reports | OBT Agency Management System</title>
+
+
+<link rel="icon"
+      type="image/x-icon"
+      href="../../favicon.ico">
+
+
+<link rel="stylesheet"
+      href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+
+
+<link rel="stylesheet"
+      href="../../assets/vendor/fontawesome/css/all.min.css">
+
+
+<link rel="stylesheet"
+      href="../../assets/css/main.css">
+
+
+<link rel="stylesheet"
+      href="../../assets/css/reports.css">
+
+</head>
+
+<body>
+
+<!-- ======================================================
+     TOP HEADER
+======================================================= -->
+
+<header class="top-header">
+
+    <div class="container-fluid">
+
+        <div class="header-content">
+
+
+            <div class="brand-section">
+
+                <img src="../../assets/images/logo/logo.png"
+                     alt="NTPC Logo"
+                     class="logo">
+
+
+                <div class="brand-text">
+
+                    <h1 class="system-title">
+                        OBT Agency Management System
+                    </h1>
+
+
+                    <p class="system-subtitle">
+                        Outbond Trainning Program Agency Management System
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-user-section">
+
+                <div class="user-profile"
+                     id="userProfile">
+
+                    <span class="user-name"
+                          id="loggedInUserName">
+                        Administrator
+                    </span>
+
+
+                    <i class="fas fa-chevron-down user-dropdown-icon"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     NAVIGATION
+======================================================= -->
+
+<nav class="main-navigation">
+
+    <div class="container-fluid">
+
+        <div class="navigation-content">
+
+
+            <a href="../dashboard/dashboard.html"
+               class="nav-item">
+
+                <i class="fas fa-chart-line"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a href="../agencies-coordinators/agencies-coordinators.html"
+               class="nav-item">
+
+                <i class="fas fa-users"></i>
+
+                <span>
+                    Agencies &amp; Coordinators
+                </span>
+
+            </a>
+
+
+            <a href="reports.html"
+               class="nav-item active">
+
+                <i class="fas fa-file-lines"></i>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+
+            <a href="#"
+               class="nav-item"
+               id="logoutBtn">
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ======================================================
+     MAIN CONTENT
+======================================================= -->
+
+<main class="main-content">
+
+    <div class="container-fluid">
+
+
+        <!-- ==================================================
+             PAGE HEADER
+        =================================================== -->
+
+        <div class="page-header">
+
+            <h2 class="page-title">
+                Reports
+            </h2>
+
+
+            <div class="breadcrumb-area">
+
+                <span class="breadcrumb-home">
+                    Home
+                </span>
+
+
+                <i class="fas fa-chevron-right breadcrumb-arrow"></i>
+
+
+                <span class="breadcrumb-current">
+                    Reports
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             REPORT FILTER
+        =================================================== -->
+
+        <section class="report-filter-section">
+
+            <div class="report-card">
+
+                <div class="report-card-header">
+
+                    <div>
+
+                        <h3 class="section-title">
+                            Agency &amp; Coordinator Report
+                        </h3>
+
+
+                        <p class="report-description">
+                            Select a time period to view the
+                            agencies and coordinators active
+                            during that period.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-filter-body">
+
+                    <div class="row g-3 align-items-end">
+
+
+                        <!-- FROM DATE -->
+
+                        <div class="col-lg-4 col-md-6">
+
+                            <label for="reportFromDate"
+                                   class="form-label">
+
+                                From Date
+
+                            </label>
+
+
+                            <input type="date"
+                                   id="reportFromDate"
+                                   class="form-control">
+
+                        </div>
+
+
+
+                        <!-- TO DATE -->
+
+                        <div class="col-lg-4 col-md-6">
+
+                            <label for="reportToDate"
+                                   class="form-label">
+
+                                To Date
+
+                            </label>
+
+
+                            <input type="date"
+                                   id="reportToDate"
+                                   class="form-control">
+
+                        </div>
+
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="col-lg-4 col-md-12">
+
+                            <div class="report-action-buttons">
+
+                                <button type="button"
+                                        id="generateReportBtn"
+                                        class="btn btn-primary">
+
+                                    <i class="fas fa-file-lines me-2"></i>
+
+                                    Generate Report
+
+                                </button>
+
+
+                                <button type="button"
+                                        id="clearReportBtn"
+                                        class="btn btn-secondary">
+
+                                    <i class="fas fa-rotate-left me-2"></i>
+
+                                    Clear
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             REPORT RESULT
+        =================================================== -->
+
+        <section class="report-result-section">
+
+            <div class="report-card">
+
+
+                <!-- REPORT HEADER -->
+
+                <div class="report-result-header">
+
+                    <div>
+
+                        <h3 class="section-title">
+                            Agency &amp; Coordinator Details
+                        </h3>
+
+
+                        <p class="report-period-text">
+
+                            Report Period:
+
+                            <span id="reportPeriod"></span>
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="report-result-actions">
+
+                        <button type="button"
+                                id="printReportBtn"
+                                class="btn btn-outline-primary">
+
+                            <i class="fas fa-print me-2"></i>
+
+                            Print
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     REPORT TABLE
+                =================================================== -->
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover report-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Batch Name
+                                </th>
+
+                                <th>
+                                    Agency
+                                </th>
+
+                                <th>
+                                    Coordinator
+                                </th>
+
+                                <th>
+                                    Coordinator Designation
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Agency Contact
+                                </th>
+
+                                <th>
+                                    Agency E-mail
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="reportTableBody">
+
+                            <tr>
+
+                                <td colspan="8"
+                                    class="text-center py-4">
+
+                                    Select a date range and
+                                    generate the report.
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     ENTRY INFORMATION
+                =================================================== -->
+
+                <div class="report-table-footer">
+
+                    <span id="reportEntryInfo">
+
+                        Showing 0 to 0 of 0 entries
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
+<footer class="footer">
+
+    <div class="container">
+
+        <p class="mb-0">
+
+            © 2026 NTPC Limited |
+            OBT Agency Management System |
+            All Rights Reserved.
+
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<!-- ======================================================
+     BOOTSTRAP JAVASCRIPT
+======================================================= -->
+
+<script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- ======================================================
+     REPORTS JAVASCRIPT
+======================================================= -->
+
+<script src="../../assets/js/reports.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+    Agencies &amp; Coordinators | OBT Agency Management System
+</title>
+
+
+<!-- ======================================================
+     FAVICON
+======================================================= -->
+
+<link rel="icon"
+      type="image/x-icon"
+      href="../../favicon.ico">
+
+
+<!-- ======================================================
+     BOOTSTRAP CSS
+======================================================= -->
+
+<link rel="stylesheet"
+      href="../../assets/vendor/bootstrap/css/bootstrap.min.css">
+
+
+<!-- ======================================================
+     FONT AWESOME
+======================================================= -->
+
+<link rel="stylesheet"
+      href="../../assets/vendor/fontawesome/css/all.min.css">
+
+
+<!-- ======================================================
+     GLOBAL CSS
+======================================================= -->
+
+<link rel="stylesheet"
+      href="../../assets/css/main.css">
+
+
+<!-- ======================================================
+     AGENCIES & COORDINATORS CSS
+======================================================= -->
+
+<link rel="stylesheet"
+      href="../../assets/css/agencies-coordinators.css">
+
+
+</head>
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+======================================================= -->
+
+<header class="top-header">
+
+    <div class="container-fluid">
+
+        <div class="header-content">
+
+
+            <!-- ==================================================
+                 BRAND
+            =================================================== -->
+
+            <div class="brand-section">
+
+                <img src="../../assets/images/logo/logo.png"
+                     alt="NTPC Logo"
+                     class="logo">
+
+
+                <div class="brand-text">
+
+                    <h1 class="system-title">
+                        OBT Agency Management System
+                    </h1>
+
+
+                    <p class="system-subtitle">
+                        Outbond Trainning Program Agency Management System
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 USER AREA
+            =================================================== -->
+
+            <div class="header-user-section">
+
+                <div class="user-profile"
+                     id="userProfile">
+
+                    <span class="user-name"
+                          id="loggedInUserName">
+                    </span>
+
+
+                    <i class="fas fa-chevron-down user-dropdown-icon"></i>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     NAVIGATION
+======================================================= -->
+
+<nav class="main-navigation">
+
+    <div class="container-fluid">
+
+        <div class="navigation-content">
+
+
+            <!-- ==================================================
+                 DASHBOARD
+            =================================================== -->
+
+            <a href="../dashboard/dashboard.html"
+               class="nav-item">
+
+                <i class="fas fa-chart-line"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- ==================================================
+                 AGENCIES & COORDINATORS
+            =================================================== -->
+
+            <a href="agencies-coordinators.html"
+               class="nav-item active">
+
+                <i class="fas fa-users"></i>
+
+                <span>
+                    Agencies &amp; Coordinators
+                </span>
+
+            </a>
+
+
+            <!-- ==================================================
+                 REPORTS
+            =================================================== -->
+
+            <a href="../reports/reports.html"
+               class="nav-item">
+
+                <i class="fas fa-file-lines"></i>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+
+            <!-- ==================================================
+                 LOGOUT
+            =================================================== -->
+
+            <a href="#"
+               class="nav-item"
+               id="logoutBtn">
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ======================================================
+     MAIN CONTENT
+======================================================= -->
+
+<main class="main-content">
+
+    <div class="container-fluid">
+
+
+        <!-- ==================================================
+             PAGE HEADER
+        =================================================== -->
+
+        <div class="page-header">
+
+            <h2 class="page-title">
+                Agencies &amp; Coordinators
+            </h2>
+
+
+            <div class="breadcrumb-area">
+
+                <span class="breadcrumb-home">
+                    Home
+                </span>
+
+
+                <i class="fas fa-chevron-right breadcrumb-arrow"></i>
+
+
+                <span class="breadcrumb-current">
+                    Agencies &amp; Coordinators
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             MANAGEMENT CARD
+        =================================================== -->
+
+        <section class="management-card">
+
+            <div class="card-body">
+
+
+                <!-- ==================================================
+                     MANAGEMENT TABS
+                =================================================== -->
+
+                <div class="management-tabs">
+
+
+                    <!-- AGENCIES TAB -->
+
+                    <button type="button"
+                            class="management-tab active"
+                            id="agenciesTab">
+
+                        <i class="fas fa-building"></i>
+
+                        Agencies
+
+                    </button>
+
+
+                    <!-- COORDINATORS TAB -->
+
+                    <button type="button"
+                            class="management-tab"
+                            id="coordinatorsTab">
+
+                        <i class="fas fa-user-tie"></i>
+
+                        Coordinators
+
+                    </button>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     AGENCIES PANEL
+                =================================================== -->
+
+                <div class="management-panel active"
+                     id="agenciesPanel">
+
+
+                    <!-- ==================================================
+                         AGENCY ACTION BAR
+                    =================================================== -->
+
+                    <div class="management-action-bar">
+
+
+                        <!-- ADD AGENCY -->
+
+                        <button type="button"
+                                class="btn btn-primary add-btn"
+                                id="addAgencyBtn">
+
+                            <i class="fas fa-plus"></i>
+
+                            Add Agency
+
+                        </button>
+
+
+                        <!-- SEARCH AGENCY -->
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search"></i>
+
+                            <input type="text"
+                                   id="agencySearch"
+                                   placeholder="Search Agency..."
+                                   autocomplete="off">
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         AGENCY TABLE
+                    =================================================== -->
+
+                    <div class="table-responsive">
+
+                        <table class="table management-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Agency Name
+                                    </th>
+
+                                    <th>
+                                        Contact Person
+                                    </th>
+
+                                    <th>
+                                        Contact No.
+                                    </th>
+
+                                    <th>
+                                        Email
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="agencyTableBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         AGENCY TABLE FOOTER
+                    =================================================== -->
+
+                    <div class="table-footer">
+
+                        <span id="agencyEntryInfo">
+                            Showing 0 to 0 of 0 entries
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     COORDINATORS PANEL
+                =================================================== -->
+
+                <div class="management-panel"
+                     id="coordinatorsPanel">
+
+
+                    <!-- ==================================================
+                         COORDINATOR ACTION BAR
+                    =================================================== -->
+
+                    <div class="management-action-bar">
+
+
+                        <!-- ADD COORDINATOR -->
+
+                        <button type="button"
+                                class="btn btn-primary add-btn"
+                                id="addCoordinatorBtn">
+
+                            <i class="fas fa-plus"></i>
+
+                            Add Coordinator
+
+                        </button>
+
+
+                        <!-- SEARCH COORDINATOR -->
+
+                        <div class="search-box">
+
+                            <i class="fas fa-search"></i>
+
+                            <input type="text"
+                                   id="coordinatorSearch"
+                                   placeholder="Search Coordinator..."
+                                   autocomplete="off">
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         COORDINATOR TABLE
+                    =================================================== -->
+
+                    <div class="table-responsive">
+
+                        <table class="table management-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        #
+                                    </th>
+
+                                    <th>
+                                        Coordinator
+                                    </th>
+
+                                    <th>
+                                        Agency
+                                    </th>
+
+                                    <th>
+                                        Batch Name
+                                    </th>
+
+                                    <th>
+                                        Date
+                                    </th>
+
+                                    <th>
+                                        Designation
+                                    </th>
+
+                                    <th>
+                                        Phone
+                                    </th>
+
+                                    <th>
+                                        Email
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="coordinatorTableBody">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+
+                    <!-- ==================================================
+                         COORDINATOR TABLE FOOTER
+                    =================================================== -->
+
+                    <div class="table-footer">
+
+                        <span id="coordinatorEntryInfo">
+                            Showing 0 to 0 of 0 entries
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- ======================================================
+     ADD / EDIT AGENCY MODAL
+======================================================= -->
+
+<div class="modal fade"
+     id="addAgencyModal"
+     tabindex="-1"
+     aria-labelledby="addAgencyModalLabel"
+     aria-hidden="true">
+
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+
+        <div class="modal-content">
+
+
+            <!-- ==================================================
+                 MODAL HEADER
+            =================================================== -->
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="addAgencyModalLabel">
+
+                    <i class="fas fa-building me-2"></i>
+
+                    Add Agency
+
+                </h5>
+
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 MODAL BODY
+            =================================================== -->
+
+            <div class="modal-body">
+
+                <form id="agencyForm"
+                      novalidate>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- AGENCY NAME -->
+
+                        <div class="col-md-6">
+
+                            <label for="agencyName"
+                                   class="form-label">
+
+                                Agency Name
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="agencyName"
+                                   name="agencyName"
+                                   placeholder="Enter agency name"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- CONTACT PERSON -->
+
+                        <div class="col-md-6">
+
+                            <label for="agencyContactPerson"
+                                   class="form-label">
+
+                                Contact Person
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="agencyContactPerson"
+                                   name="agencyContactPerson"
+                                   placeholder="Enter contact person"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- CONTACT NUMBER -->
+
+                        <div class="col-md-6">
+
+                            <label for="agencyContactNo"
+                                   class="form-label">
+
+                                Contact No.
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="tel"
+                                   class="form-control"
+                                   id="agencyContactNo"
+                                   name="agencyContactNo"
+                                   placeholder="Enter contact number"
+                                   autocomplete="off"
+                                   maxlength="15"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        <div class="col-md-6">
+
+                            <label for="agencyEmail"
+                                   class="form-label">
+
+                                Email
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="email"
+                                   class="form-control"
+                                   id="agencyEmail"
+                                   name="agencyEmail"
+                                   placeholder="Enter email address"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- STATUS -->
+
+                        <div class="col-md-6">
+
+                            <label for="agencyStatus"
+                                   class="form-label">
+
+                                Status
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <select class="form-select"
+                                    id="agencyStatus"
+                                    name="agencyStatus"
+                                    required>
+
+                                <option value="Active"
+                                        selected>
+
+                                    Active
+
+                                </option>
+
+
+                                <option value="Inactive">
+
+                                    Inactive
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 MODAL FOOTER
+            =================================================== -->
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    <i class="fas fa-xmark me-1"></i>
+
+                    Cancel
+
+                </button>
+
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="saveAgencyBtn">
+
+                    <i class="fas fa-save me-1"></i>
+
+                    Save Agency
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================================
+     ADD / EDIT COORDINATOR MODAL
+======================================================= -->
+
+<div class="modal fade"
+     id="addCoordinatorModal"
+     tabindex="-1"
+     aria-labelledby="addCoordinatorModalLabel"
+     aria-hidden="true">
+
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+
+        <div class="modal-content">
+
+
+            <!-- ==================================================
+                 MODAL HEADER
+            =================================================== -->
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="addCoordinatorModalLabel">
+
+                    <i class="fas fa-user-plus me-2"></i>
+
+                    Add Coordinator
+
+                </h5>
+
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 MODAL BODY
+            =================================================== -->
+
+            <div class="modal-body">
+
+                <form id="coordinatorForm"
+                      novalidate>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- ==================================================
+                             COORDINATOR NAME
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorName"
+                                   class="form-label">
+
+                                Coordinator Name
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="coordinatorName"
+                                   name="coordinatorName"
+                                   placeholder="Enter coordinator name"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             AGENCY
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorAgency"
+                                   class="form-label">
+
+                                Agency
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <select class="form-select"
+                                    id="coordinatorAgency"
+                                    name="coordinatorAgency"
+                                    required>
+
+                                <option value="">
+                                    Select Agency
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             BATCH NAME
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorBatchName"
+                                   class="form-label">
+
+                                Batch Name
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="coordinatorBatchName"
+                                   name="coordinatorBatchName"
+                                   placeholder="Enter batch name"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             DESIGNATION
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorDesignation"
+                                   class="form-label">
+
+                                Designation
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="text"
+                                   class="form-control"
+                                   id="coordinatorDesignation"
+                                   name="coordinatorDesignation"
+                                   placeholder="Enter designation"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             START DATE
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorStartDate"
+                                   class="form-label">
+
+                                Start Date
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="date"
+                                   class="form-control"
+                                   id="coordinatorStartDate"
+                                   name="coordinatorStartDate"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             END DATE
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorEndDate"
+                                   class="form-label">
+
+                                End Date
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="date"
+                                   class="form-control"
+                                   id="coordinatorEndDate"
+                                   name="coordinatorEndDate"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             PHONE
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorPhone"
+                                   class="form-label">
+
+                                Phone
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="tel"
+                                   class="form-control"
+                                   id="coordinatorPhone"
+                                   name="coordinatorPhone"
+                                   placeholder="Enter phone number"
+                                   autocomplete="off"
+                                   maxlength="15"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             EMAIL
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorEmail"
+                                   class="form-label">
+
+                                Email
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <input type="email"
+                                   class="form-control"
+                                   id="coordinatorEmail"
+                                   name="coordinatorEmail"
+                                   placeholder="Enter email address"
+                                   autocomplete="off"
+                                   required>
+
+                        </div>
+
+
+
+                        <!-- ==================================================
+                             STATUS
+                        =================================================== -->
+
+                        <div class="col-md-6">
+
+                            <label for="coordinatorStatus"
+                                   class="form-label">
+
+                                Status
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+
+                            <select class="form-select"
+                                    id="coordinatorStatus"
+                                    name="coordinatorStatus"
+                                    required>
+
+                                <option value="Active"
+                                        selected>
+
+                                    Active
+
+                                </option>
+
+
+                                <option value="Inactive">
+
+                                    Inactive
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 MODAL FOOTER
+            =================================================== -->
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    <i class="fas fa-xmark me-1"></i>
+
+                    Cancel
+
+                </button>
+
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="saveCoordinatorBtn">
+
+                    <i class="fas fa-save me-1"></i>
+
+                    Save Coordinator
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
+<footer class="main-footer">
+
+    <div class="container">
+
+        <p class="mb-0">
+
+            © 2026 NTPC Limited |
+            OBT Agency Management System |
+            All Rights Reserved.
+
+        </p>
+
+    </div>
+
+</footer>
+
+
+
+<!-- ======================================================
+     BOOTSTRAP JAVASCRIPT
+======================================================= -->
+
+<script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- ======================================================
+     AGENCIES & COORDINATORS JAVASCRIPT
+======================================================= -->
+
+<script src="../../assets/js/agencies-coordinators.js"></script>
+
+
+</body>
+
+</html>

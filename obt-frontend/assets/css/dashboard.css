@@ -1,0 +1,1055 @@
+/* ==========================================================
+   OBT AGENCY MANAGEMENT SYSTEM
+   Dashboard Page Styles
+
+   Author  : NTPC
+   Version : 1.0
+========================================================== */
+
+
+/* ==========================================================
+   DASHBOARD PAGE
+========================================================== */
+
+.dashboard-page {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: var(--background-color);
+
+}
+
+
+/* ==========================================================
+   DASHBOARD STATISTICS
+========================================================== */
+
+.dashboard-statistics {
+
+    margin-bottom: 30px;
+
+}
+
+
+/* ==========================================================
+   STAT CARD
+========================================================== */
+
+.stat-card {
+
+    min-height: 155px;
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 27px 30px;
+
+    background: var(--surface-color);
+
+    border: 1px solid #e0e5ed;
+
+    border-radius: 9px;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .07);
+
+}
+
+
+/* ==========================================================
+   STAT ICON
+========================================================== */
+
+.stat-icon {
+
+    width: 88px;
+
+    height: 88px;
+
+    min-width: 88px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-right: 30px;
+
+    border-radius: 50%;
+
+}
+
+
+.stat-icon i {
+
+    color: var(--white);
+
+    font-size: 38px;
+
+}
+
+
+/* ==========================================================
+   STAT CARD COLORS
+========================================================== */
+
+.stat-card-blue .stat-icon {
+
+    background: #1261d6;
+
+}
+
+
+.stat-card-green .stat-icon {
+
+    background: #19945f;
+
+}
+
+
+.stat-card-purple .stat-icon {
+
+    background: #5630a6;
+
+}
+
+
+.stat-card-orange .stat-icon {
+
+    background: #f56d20;
+
+}
+
+
+/* ==========================================================
+   STAT CONTENT
+========================================================== */
+
+.stat-content {
+
+    min-width: 0;
+
+}
+
+
+.stat-title {
+
+    margin-bottom: 11px;
+
+    color: #11182f;
+
+    font-size: 19px;
+
+    font-weight: var(--fw-medium);
+
+    line-height: 1.3;
+
+}
+
+
+.stat-value {
+
+    color: #1261d6;
+
+    font-size: 48px;
+
+    font-weight: var(--fw-medium);
+
+    line-height: 1;
+
+}
+
+
+/* ==========================================================
+   STATISTIC VALUE COLORS
+========================================================== */
+
+.stat-card-blue .stat-value {
+
+    color: #1261d6;
+
+}
+
+
+.stat-card-green .stat-value {
+
+    color: #19945f;
+
+}
+
+
+.stat-card-purple .stat-value {
+
+    color: #5630a6;
+
+}
+
+
+.stat-card-orange .stat-value {
+
+    color: #f56d20;
+
+}
+
+
+/* ==========================================================
+   RECENT TRAINING SECTION
+========================================================== */
+
+.recent-training-section {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   RECENT TRAINING CARD
+========================================================== */
+
+.recent-training-card {
+
+    width: 100%;
+
+    padding: 22px 28px 30px;
+
+    background: var(--surface-color);
+
+    border: 1px solid #e0e5ed;
+
+    border-radius: 9px;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .07);
+
+}
+
+
+/* ==========================================================
+   SECTION TITLE
+========================================================== */
+
+.section-title {
+
+    margin: 0 0 18px;
+
+    color: #005bea;
+
+    font-size: 22px;
+
+    font-weight: var(--fw-bold);
+
+    line-height: 1.3;
+
+}
+
+
+/* ==========================================================
+   TRAINING SELECTOR
+========================================================== */
+
+.training-selector {
+
+    margin-bottom: 20px;
+
+}
+
+
+.training-label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #11182f;
+
+    font-size: 17px;
+
+    font-weight: var(--fw-medium);
+
+}
+
+
+.training-select {
+
+    width: 100%;
+
+    height: 54px;
+
+    padding: 0 45px 0 24px;
+
+    border: 1px solid #1261ff;
+
+    border-radius: 7px;
+
+    background-color: var(--surface-color);
+
+    color: #11182f;
+
+    font-size: 17px;
+
+    box-shadow: none;
+
+}
+
+
+.training-select:focus {
+
+    border-color: #1261ff;
+
+    box-shadow: 0 0 0 2px rgba(18, 97, 255, .08);
+
+}
+
+
+.training-select option {
+
+    color: #11182f;
+
+}
+
+
+/* ==========================================================
+   TRAINING DETAILS
+========================================================== */
+
+.training-details {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 30px;
+
+    padding: 20px 25px;
+
+    border: 1px solid #e0e5ed;
+
+    border-radius: 8px;
+
+    background: var(--surface-color);
+
+}
+
+
+/* ==========================================================
+   TRAINING DETAILS COLUMN
+========================================================== */
+
+.training-details-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 17px;
+
+}
+
+
+/* ==========================================================
+   DETAIL ROW
+========================================================== */
+
+.detail-row {
+
+    display: grid;
+
+    grid-template-columns:
+        40px
+        155px
+        18px
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    min-height: 35px;
+
+}
+
+
+/* ==========================================================
+   DETAIL ICON
+========================================================== */
+
+.detail-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    color: #005bea;
+
+    font-size: 22px;
+
+}
+
+
+.detail-icon i {
+
+    display: block;
+
+}
+
+
+/* ==========================================================
+   DETAIL LABEL
+========================================================== */
+
+.detail-label {
+
+    color: #11182f;
+
+    font-size: 17px;
+
+    font-weight: var(--fw-medium);
+
+}
+
+
+/* ==========================================================
+   DETAIL SEPARATOR
+========================================================== */
+
+.detail-separator {
+
+    color: #11182f;
+
+    font-size: 17px;
+
+    font-weight: var(--fw-medium);
+
+    text-align: center;
+
+}
+
+
+/* ==========================================================
+   DETAIL VALUE
+========================================================== */
+
+.detail-value {
+
+    min-width: 0;
+
+    color: #11182f;
+
+    font-size: 17px;
+
+    font-weight: var(--fw-normal);
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* ==========================================================
+   STATUS BADGE
+========================================================== */
+
+.status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 135px;
+
+    min-height: 40px;
+
+    padding: 6px 16px;
+
+    border: 1px solid #d5ead9;
+
+    border-radius: 6px;
+
+    background: #f1f9f2;
+
+    color: #16813d;
+
+    font-size: 15px;
+
+    font-weight: var(--fw-medium);
+
+}
+
+
+.status-badge:not(:empty)::before {
+
+    content: "";
+
+    width: 10px;
+
+    height: 10px;
+
+    margin-right: 8px;
+
+    border-radius: 50%;
+
+    background: #169447;
+
+}
+
+
+/* ==========================================================
+   STATUS - ACTIVE
+========================================================== */
+
+.status-badge.status-active {
+
+    background: #eef7ff;
+
+    border-color: #d7e8ff;
+
+    color: #1261d6;
+
+}
+
+
+.status-badge.status-active::before {
+
+    background: #1261d6;
+
+}
+
+
+/* ==========================================================
+   STATUS - COMPLETED
+========================================================== */
+
+.status-badge.status-completed {
+
+    background: #f1f9f2;
+
+    border-color: #d5ead9;
+
+    color: #16813d;
+
+}
+
+
+.status-badge.status-completed::before {
+
+    background: #169447;
+
+}
+
+
+/* ==========================================================
+   STATUS - UPCOMING
+========================================================== */
+
+.status-badge.status-upcoming {
+
+    background: #fff8e8;
+
+    border-color: #f5e4b7;
+
+    color: #c88900;
+
+}
+
+
+.status-badge.status-upcoming::before {
+
+    background: #d59a00;
+
+}
+
+
+/* ==========================================================
+   STATUS - CANCELLED
+========================================================== */
+
+.status-badge.status-cancelled {
+
+    background: #fff0f0;
+
+    border-color: #f0d2d2;
+
+    color: #d63333;
+
+}
+
+
+.status-badge.status-cancelled::before {
+
+    background: #d63333;
+
+}
+
+
+/* ==========================================================
+   DASHBOARD RESPONSIVE
+========================================================== */
+
+
+/* ----------------------------------------------------------
+   LARGE DESKTOP
+   1400px AND ABOVE
+---------------------------------------------------------- */
+
+@media (min-width: 1400px) {
+
+    .stat-card {
+
+        min-height: 155px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   DESKTOP
+   1200px - 1399px
+---------------------------------------------------------- */
+
+@media (max-width: 1399px) {
+
+    .stat-icon {
+
+        width: 80px;
+
+        height: 80px;
+
+        min-width: 80px;
+
+        margin-right: 25px;
+
+    }
+
+
+    .stat-icon i {
+
+        font-size: 34px;
+
+    }
+
+
+    .stat-title {
+
+        font-size: 18px;
+
+    }
+
+
+    .stat-value {
+
+        font-size: 45px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   LAPTOP
+   992px - 1199px
+---------------------------------------------------------- */
+
+@media (max-width: 1199px) {
+
+    .stat-card {
+
+        padding: 23px;
+
+    }
+
+
+    .stat-icon {
+
+        width: 74px;
+
+        height: 74px;
+
+        min-width: 74px;
+
+        margin-right: 20px;
+
+    }
+
+
+    .stat-icon i {
+
+        font-size: 31px;
+
+    }
+
+
+    .stat-title {
+
+        font-size: 17px;
+
+    }
+
+
+    .stat-value {
+
+        font-size: 42px;
+
+    }
+
+
+    .training-details {
+
+        gap: 20px;
+
+        padding: 20px;
+
+    }
+
+
+    .detail-row {
+
+        grid-template-columns:
+            35px
+            130px
+            15px
+            minmax(0, 1fr);
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   TABLET
+   768px - 991px
+---------------------------------------------------------- */
+
+@media (max-width: 991px) {
+
+    .stat-card {
+
+        min-height: 140px;
+
+    }
+
+
+    .stat-icon {
+
+        width: 72px;
+
+        height: 72px;
+
+        min-width: 72px;
+
+    }
+
+
+    .stat-icon i {
+
+        font-size: 30px;
+
+    }
+
+
+    .training-details {
+
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   MOBILE
+   576px - 767px
+---------------------------------------------------------- */
+
+@media (max-width: 767px) {
+
+    .stat-card {
+
+        min-height: 125px;
+
+        padding: 20px;
+
+    }
+
+
+    .stat-icon {
+
+        width: 65px;
+
+        height: 65px;
+
+        min-width: 65px;
+
+        margin-right: 18px;
+
+    }
+
+
+    .stat-icon i {
+
+        font-size: 27px;
+
+    }
+
+
+    .stat-title {
+
+        font-size: 16px;
+
+        margin-bottom: 8px;
+
+    }
+
+
+    .stat-value {
+
+        font-size: 38px;
+
+    }
+
+
+    .recent-training-card {
+
+        padding: 18px;
+
+    }
+
+
+    .section-title {
+
+        font-size: 20px;
+
+    }
+
+
+    .training-label {
+
+        font-size: 16px;
+
+    }
+
+
+    .training-select {
+
+        height: 50px;
+
+        padding-left: 18px;
+
+        font-size: 16px;
+
+    }
+
+
+    .training-details {
+
+        padding: 17px;
+
+    }
+
+
+    .detail-row {
+
+        grid-template-columns:
+            32px
+            120px
+            14px
+            minmax(0, 1fr);
+
+    }
+
+
+    .detail-label,
+    .detail-value,
+    .detail-separator {
+
+        font-size: 15px;
+
+    }
+
+
+    .detail-icon {
+
+        font-size: 20px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   SMALL MOBILE
+   BELOW 576px
+---------------------------------------------------------- */
+
+@media (max-width: 575px) {
+
+    .stat-card {
+
+        min-height: 115px;
+
+        padding: 18px;
+
+    }
+
+
+    .stat-icon {
+
+        width: 58px;
+
+        height: 58px;
+
+        min-width: 58px;
+
+        margin-right: 15px;
+
+    }
+
+
+    .stat-icon i {
+
+        font-size: 24px;
+
+    }
+
+
+    .stat-title {
+
+        font-size: 15px;
+
+    }
+
+
+    .stat-value {
+
+        font-size: 34px;
+
+    }
+
+
+    .recent-training-card {
+
+        padding: 16px;
+
+    }
+
+
+    .training-details {
+
+        padding: 14px;
+
+    }
+
+
+    .detail-row {
+
+        grid-template-columns:
+            28px
+            100px
+            12px
+            minmax(0, 1fr);
+
+    }
+
+
+    .detail-label,
+    .detail-value,
+    .detail-separator {
+
+        font-size: 14px;
+
+    }
+
+
+    .detail-icon {
+
+        font-size: 18px;
+
+    }
+
+
+    .status-badge {
+
+        min-width: 115px;
+
+        min-height: 36px;
+
+        padding: 5px 10px;
+
+        font-size: 13px;
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   VERY SMALL DEVICES
+   BELOW 400px
+---------------------------------------------------------- */
+
+@media (max-width: 399px) {
+
+    .stat-icon {
+
+        width: 52px;
+
+        height: 52px;
+
+        min-width: 52px;
+
+        margin-right: 12px;
+
+    }
+
+
+    .stat-icon i {
+
+        font-size: 22px;
+
+    }
+
+
+    .stat-title {
+
+        font-size: 14px;
+
+    }
+
+
+    .stat-value {
+
+        font-size: 31px;
+
+    }
+
+
+    .detail-row {
+
+        grid-template-columns:
+            25px
+            88px
+            10px
+            minmax(0, 1fr);
+        
+    }
+
+
+    .detail-label,
+    .detail-value,
+    .detail-separator {
+
+        font-size: 13px;
+
+    }
+
+}
