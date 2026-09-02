@@ -1,68 +1,40 @@
+
 "use strict";
 
 /* ==========================================================
    OBT AGENCY MANAGEMENT SYSTEM
    Login Page JavaScript
 
-   Author  : NTPC
-   Version : 1.0
+   Authentication:
+       Frontend
+          ↓
+       api.js
+          ↓
+       POST /api/auth/login
+          ↓
+       Spring Boot AuthController
+          ↓
+       AuthService
+          ↓
+       MySQL users table
 
-   NOTE:
-   The credentials below are TEMPORARY DEVELOPMENT
-   credentials only.
-
-   They will later be replaced by actual
-   backend authentication / User & Role Management.
+   IMPORTANT:
+   - No temporary frontend users.
+   - Password is never stored in localStorage.
+   - Backend is the source of truth for authentication.
 ========================================================== */
 
 
 /* ==========================================================
-   STORAGE KEY
+   STORAGE KEYS
 ========================================================== */
 
 const LOGIN_STORAGE_KEY =
     "obt_logged_in_user";
 
 
-/* ==========================================================
-   REMEMBERED USERNAME STORAGE KEY
-========================================================== */
-
 const REMEMBERED_USERNAME_KEY =
     "obt_remembered_username";
-
-
-/* ==========================================================
-   TEMPORARY DEVELOPMENT USERS
-========================================================== */
-
-/*
-    IMPORTANT:
-    These users are only for frontend development/testing.
-
-    Do NOT use these credentials in production.
-
-    Later these records will come from the
-    backend / database / User & Role Management module.
-*/
-
-const TEMPORARY_USERS = [
-
-    {
-        username: "admin",
-        password: "admin123",
-        name: "System Administrator",
-        role: "Administrator"
-    },
-
-    {
-        username: "coordinator",
-        password: "coord123",
-        name: "Training Coordinator",
-        role: "Coordinator"
-    }
-
-];
 
 
 /* ==========================================================
@@ -89,7 +61,6 @@ const dom = {
 };
 
 
-
 /* ==========================================================
    PAGE INITIALIZATION
 ========================================================== */
@@ -106,23 +77,9 @@ document.addEventListener(
 
 function initializeLogin() {
 
-    /*
-        Bind login form.
-    */
-
     bindLoginForm();
 
-
-    /*
-        Bind password visibility toggle.
-    */
-
     bindPasswordToggle();
-
-
-    /*
-        Restore remembered username.
-    */
 
     restoreRememberedUsername();
 
@@ -233,21 +190,17 @@ function togglePasswordVisibility() {
    HANDLE LOGIN
 ========================================================== */
 
-function handleLogin(event) {
+async function handleLogin(event) {
 
     event.preventDefault();
 
 
-    /*
-        Clear previous errors.
-    */
-
     clearValidation();
 
 
-    /*
-        Read username.
-    */
+    /* ------------------------------------------------------
+       READ USERNAME
+    ------------------------------------------------------ */
 
     const username =
         dom.username
@@ -255,9 +208,9 @@ function handleLogin(event) {
             : "";
 
 
-    /*
-        Read password.
-    */
+    /* ------------------------------------------------------
+       READ PASSWORD
+    ------------------------------------------------------ */
 
     const password =
         dom.password
@@ -273,6 +226,10 @@ function handleLogin(event) {
 
         showLoginError(
             "Please enter your username."
+        );
+
+        markInvalid(
+            dom.username
         );
 
         focusElement(
@@ -294,6 +251,10 @@ function handleLogin(event) {
             "Please enter your password."
         );
 
+        markInvalid(
+            dom.password
+        );
+
         focusElement(
             dom.password
         );
@@ -304,26 +265,88 @@ function handleLogin(event) {
 
 
     /* ------------------------------------------------------
-       FIND USER
+       DISABLE LOGIN BUTTON
     ------------------------------------------------------ */
 
-    const user =
-        TEMPORARY_USERS.find(
-            storedUser =>
+    const loginButton =
+        dom.loginForm
+            ? dom.loginForm.querySelector(
+                'button[type="submit"]'
+            )
+            : null;
 
-                storedUser.username === username &&
-                storedUser.password === password
+
+    setLoginButtonState(
+        loginButton,
+        true
+    );
+
+
+    try {
+
+        /* --------------------------------------------------
+           BACKEND LOGIN REQUEST
+        -------------------------------------------------- */
+
+        const loginResponse =
+            await loginUserApi(
+                username,
+                password
+            );
+
+
+        /* --------------------------------------------------
+           VERIFY RESPONSE
+        -------------------------------------------------- */
+
+        if (!loginResponse) {
+
+            throw new Error(
+                "Invalid response received from the server."
+            );
+
+        }
+
+
+        /* --------------------------------------------------
+           CREATE FRONTEND SESSION
+        -------------------------------------------------- */
+
+        createLoginSession(
+            loginResponse
         );
 
 
-    /* ------------------------------------------------------
-       INVALID CREDENTIALS
-    ------------------------------------------------------ */
+        /* --------------------------------------------------
+           REMEMBER USERNAME
+        -------------------------------------------------- */
 
-    if (!user) {
+        handleRememberMe(
+            username
+        );
+
+
+        /* --------------------------------------------------
+           REDIRECT
+        -------------------------------------------------- */
+
+        redirectToDashboard();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Login failed:",
+            error
+        );
+
 
         showLoginError(
-            "Invalid username or password."
+            getLoginErrorMessage(
+                error
+            )
         );
 
 
@@ -334,38 +357,83 @@ function handleLogin(event) {
         }
 
 
+        markInvalid(
+            dom.password
+        );
+
+
         focusElement(
             dom.password
         );
 
-        return;
+    }
+
+    finally {
+
+        setLoginButtonState(
+            loginButton,
+            false
+        );
 
     }
 
+}
 
-    /* ------------------------------------------------------
-       CREATE SESSION
-    ------------------------------------------------------ */
 
-    createLoginSession(
-        user
+/* ==========================================================
+   BACKEND LOGIN API
+========================================================== */
+
+/*
+   Calls:
+
+       POST /api/auth/login
+
+   Request:
+
+       {
+           username: "...",
+           password: "..."
+       }
+
+   Response:
+
+       {
+           id: 8,
+           username: "...",
+           name: "...",
+           email: "...",
+           role: "...",
+           status: "ACTIVE"
+       }
+*/
+
+async function loginUserApi(
+    username,
+    password
+) {
+
+    return await apiRequest(
+
+        "/auth/login",
+
+        {
+
+            method: "POST",
+
+            body: {
+
+                username:
+                    username,
+
+                password:
+                    password
+
+            }
+
+        }
+
     );
-
-
-    /* ------------------------------------------------------
-       REMEMBER USERNAME
-    ------------------------------------------------------ */
-
-    handleRememberMe(
-        username
-    );
-
-
-    /* ------------------------------------------------------
-       REDIRECT
-    ------------------------------------------------------ */
-
-    redirectToDashboard();
 
 }
 
@@ -375,19 +443,24 @@ function handleLogin(event) {
 ========================================================== */
 
 /*
-    This function creates the temporary frontend session.
+   IMPORTANT:
 
-    Later, the backend authentication response can provide
-    the same user information.
+   The password is NOT stored.
 
-    Dashboard expects:
+   Only the authenticated user's
+   information returned by the backend
+   is stored.
 
-        username
-        name
-        role
+   Dashboard expects:
+
+       username
+       name
+       role
 */
 
-function createLoginSession(user) {
+function createLoginSession(
+    user
+) {
 
     if (!user) {
 
@@ -398,14 +471,23 @@ function createLoginSession(user) {
 
     const loggedInUser = {
 
+        id:
+            user.id,
+
         username:
             user.username,
 
         name:
             user.name,
 
+        email:
+            user.email,
+
         role:
             user.role,
+
+        status:
+            user.status,
 
         loginTime:
             new Date().toISOString()
@@ -414,10 +496,13 @@ function createLoginSession(user) {
 
 
     localStorage.setItem(
+
         LOGIN_STORAGE_KEY,
+
         JSON.stringify(
             loggedInUser
         )
+
     );
 
 }
@@ -427,7 +512,9 @@ function createLoginSession(user) {
    REMEMBER ME
 ========================================================== */
 
-function handleRememberMe(username) {
+function handleRememberMe(
+    username
+) {
 
     if (!dom.rememberMe) {
 
@@ -441,8 +528,11 @@ function handleRememberMe(username) {
     ) {
 
         localStorage.setItem(
+
             REMEMBERED_USERNAME_KEY,
+
             username
+
         );
 
     }
@@ -450,7 +540,9 @@ function handleRememberMe(username) {
     else {
 
         localStorage.removeItem(
+
             REMEMBERED_USERNAME_KEY
+
         );
 
     }
@@ -505,7 +597,7 @@ function restoreRememberedUsername() {
 function redirectToDashboard() {
 
     /*
-        index.html is located at the project root.
+        index.html is at project root.
 
         Dashboard:
 
@@ -519,14 +611,39 @@ function redirectToDashboard() {
 
 
 /* ==========================================================
-   LOGIN ERROR
+   LOGIN ERROR MESSAGE
 ========================================================== */
 
-function showLoginError(message) {
+function getLoginErrorMessage(
+    error
+) {
 
-    /*
-        Remove existing error.
-    */
+    if (!error) {
+
+        return "Login failed.";
+
+    }
+
+
+    if (error.message) {
+
+        return error.message;
+
+    }
+
+
+    return "Invalid username or password.";
+
+}
+
+
+/* ==========================================================
+   SHOW LOGIN ERROR
+========================================================== */
+
+function showLoginError(
+    message
+) {
 
     const existingError =
         document.getElementById(
@@ -540,10 +657,6 @@ function showLoginError(message) {
 
     }
 
-
-    /*
-        Create error element.
-    */
 
     const errorElement =
         document.createElement(
@@ -570,10 +683,6 @@ function showLoginError(message) {
         `<i class="fas fa-circle-exclamation me-2"></i>
          ${escapeHtml(message)}`;
 
-
-    /*
-        Add error below the form.
-    */
 
     if (dom.loginForm) {
 
@@ -626,10 +735,89 @@ function clearValidation() {
 
 
 /* ==========================================================
+   MARK FIELD INVALID
+========================================================== */
+
+function markInvalid(
+    element
+) {
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.classList.add(
+        "is-invalid"
+    );
+
+}
+
+
+/* ==========================================================
+   LOGIN BUTTON STATE
+========================================================== */
+
+function setLoginButtonState(
+    button,
+    loading
+) {
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    if (loading) {
+
+        button.disabled =
+            true;
+
+
+        button.dataset.originalHtml =
+            button.innerHTML;
+
+
+        button.innerHTML =
+
+            `<span class="spinner-border spinner-border-sm me-2"
+                   role="status"
+                   aria-hidden="true"></span>
+             Logging in...`;
+
+    }
+
+    else {
+
+        button.disabled =
+            false;
+
+
+        if (
+            button.dataset.originalHtml
+        ) {
+
+            button.innerHTML =
+                button.dataset.originalHtml;
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================================
    FOCUS ELEMENT
 ========================================================== */
 
-function focusElement(element) {
+function focusElement(
+    element
+) {
 
     if (!element) {
 
@@ -650,7 +838,9 @@ function focusElement(element) {
    HTML ESCAPE
 ========================================================== */
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+) {
 
     return String(value)
 
@@ -680,3 +870,4 @@ function escapeHtml(value) {
         );
 
 }
+

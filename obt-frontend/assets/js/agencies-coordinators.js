@@ -1,412 +1,898 @@
-/* ==========================================================
-   OBT AGENCY MANAGEMENT SYSTEM
-   AGENCIES & COORDINATORS
-   JavaScript
-========================================================== */
+/*
+==========================================================
+OBT AGENCY MANAGEMENT SYSTEM
+AGENCIES & COORDINATORS
+FRONTEND <-> SPRING BOOT BACKEND
+
+IMPORTANT:
+
+Agency:
+    agencyName
+    contactPerson
+    phone
+    email
+    status
+
+Agency DOES NOT contain a date.
+
+Coordinator:
+    name
+    agency
+    batchName
+    startDate
+    endDate
+    designation
+    phone
+    email
+    status
+
+Rotation:
+    agencyId
+    rotationOrder
+
+IMPORTANT:
+    Rotation order is NOT restricted to 1-5.
+    The backend is the source of truth for rotation order.
+
+STATUS RULE:
+
+Coordinator status is determined from:
+    startDate
+    endDate
+
+If:
+    today >= startDate
+    AND
+    today <= endDate
+
+then:
+    Active
+
+Otherwise:
+    Inactive
+
+Agency status is determined from its associated
+Coordinator's startDate and endDate.
+
+==========================================================
+*/
 
 "use strict";
 
 
-/* ==========================================================
-   LOCAL STORAGE KEYS
-========================================================== */
-
-var AGENCIES_KEY = "obt_agencies";
-var COORDINATORS_KEY = "obt_coordinators";
-
-
-/* ==========================================================
-   GLOBAL DATA
-========================================================== */
+/*
+==========================================================
+GLOBAL DATA
+==========================================================
+*/
 
 var agencies = [];
 var coordinators = [];
+var rotations = [];
 
 var editingAgencyId = null;
 var editingCoordinatorId = null;
 
 
-/* ==========================================================
-   DOM READY
-========================================================== */
+/*
+==========================================================
+DOM READY
+==========================================================
+*/
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        initializePage();
+    }
+);
 
-    initializePage();
 
-});
+/*
+==========================================================
+INITIALIZE PAGE
+==========================================================
+*/
 
-
-/* ==========================================================
-   INITIALIZE PAGE
-========================================================== */
-
-function initializePage() {
-
-    loadAgencies();
-
-    loadCoordinators();
+async function initializePage() {
 
     registerTabEvents();
-
     registerAgencyEvents();
-
     registerCoordinatorEvents();
-
-    renderAgencies();
-
-    renderCoordinators();
-
-    populateAgencyDropdown();
 
     loadLoggedInUser();
 
+    await loadAgencies();
+    await loadRotations();
+    await loadCoordinators();
+
+    /*
+    Recalculate statuses immediately after
+    backend data has been loaded.
+    */
+    refreshCalculatedStatuses();
+
+    renderAgencies();
+    renderCoordinators();
+    populateAgencyDropdown();
+    updateDashboardData();
 }
 
 
-/* ==========================================================
-   LOAD LOGGED-IN USER
-========================================================== */
+/*
+==========================================================
+LOAD LOGGED-IN USER
+==========================================================
+*/
 
 function loadLoggedInUser() {
 
-    var userElement = document.getElementById("loggedInUserName");
+    var userElement =
+        document.getElementById(
+            "loggedInUserName"
+        );
 
     if (!userElement) {
         return;
     }
 
-    var loggedInUser = localStorage.getItem("obt_logged_in_user");
+    var loggedInUser =
+        localStorage.getItem(
+            "obt_logged_in_user"
+        );
 
-    if (loggedInUser) {
-
-        userElement.textContent = loggedInUser;
-
-    } else {
-
-        userElement.textContent = "Administrator";
-
-    }
-
+    userElement.textContent =
+        loggedInUser ||
+        "Administrator";
 }
 
 
-/* ==========================================================
-   LOAD AGENCIES
-========================================================== */
+/*
+==========================================================
+LOAD AGENCIES
+==========================================================
+*/
 
-function loadAgencies() {
-
-    var storedAgencies = localStorage.getItem(AGENCIES_KEY);
-
-    if (!storedAgencies) {
-
-        agencies = [];
-
-        return;
-    }
+async function loadAgencies() {
 
     try {
 
-        agencies = JSON.parse(storedAgencies);
+        var data =
+            await getAgencies();
 
-        if (!Array.isArray(agencies)) {
-
-            agencies = [];
-
-        }
+        agencies =
+            Array.isArray(data)
+                ? data
+                : [];
 
     } catch (error) {
 
-        console.error("Unable to load agencies:", error);
+        console.error(
+            "Unable to load agencies:",
+            error
+        );
 
         agencies = [];
 
+        handleApiError(error);
     }
-
 }
 
 
-/* ==========================================================
-   LOAD COORDINATORS
-========================================================== */
+/*
+==========================================================
+LOAD ROTATIONS
+==========================================================
+*/
 
-function loadCoordinators() {
-
-    var storedCoordinators = localStorage.getItem(COORDINATORS_KEY);
-
-    if (!storedCoordinators) {
-
-        coordinators = [];
-
-        return;
-    }
+async function loadRotations() {
 
     try {
 
-        coordinators = JSON.parse(storedCoordinators);
+        var data =
+            await getRotations();
 
-        if (!Array.isArray(coordinators)) {
+        rotations =
+            Array.isArray(data)
+                ? data
+                : [];
 
-            coordinators = [];
-
-        }
+        console.log(
+            "Loaded rotations:",
+            rotations
+        );
 
     } catch (error) {
 
-        console.error("Unable to load coordinators:", error);
+        console.error(
+            "Unable to load rotations:",
+            error
+        );
+
+        rotations = [];
+
+        /*
+        Do not stop the Agency page if
+        rotation records are unavailable.
+        */
+
+        console.warn(
+            "Agency page will continue without rotation data."
+        );
+    }
+}
+
+
+/*
+==========================================================
+LOAD COORDINATORS
+==========================================================
+*/
+
+async function loadCoordinators() {
+
+    try {
+
+        var data =
+            await getCoordinators();
+
+        coordinators =
+            Array.isArray(data)
+                ? data
+                : [];
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load coordinators:",
+            error
+        );
 
         coordinators = [];
 
+        handleApiError(error);
+    }
+}
+
+
+/*
+==========================================================
+STATUS CALCULATION
+==========================================================
+*/
+
+/*
+----------------------------------------------------------
+GET STATUS FROM START DATE AND END DATE
+----------------------------------------------------------
+
+Rules:
+
+Before start date:
+    Inactive
+
+Between start date and end date:
+    Active
+
+On end date:
+    Active
+
+After end date:
+    Inactive
+----------------------------------------------------------
+*/
+
+function getStatusFromDates(
+    startDate,
+    endDate
+) {
+
+    if (
+        !startDate ||
+        !endDate
+    ) {
+        return "Inactive";
     }
 
-}
+    /*
+    Use local date values and remove
+    time-of-day differences.
+    */
 
+    var today =
+        new Date();
 
-/* ==========================================================
-   SAVE AGENCIES
-========================================================== */
-
-function saveAgencies() {
-
-    localStorage.setItem(
-        AGENCIES_KEY,
-        JSON.stringify(agencies)
+    today.setHours(
+        0,
+        0,
+        0,
+        0
     );
 
+    var start =
+        parseDateOnly(
+            startDate
+        );
+
+    var end =
+        parseDateOnly(
+            endDate
+        );
+
+    if (
+        !start ||
+        !end
+    ) {
+        return "Inactive";
+    }
+
+    if (
+        today >= start &&
+        today <= end
+    ) {
+        return "Active";
+    }
+
+    return "Inactive";
 }
 
 
-/* ==========================================================
-   SAVE COORDINATORS
-========================================================== */
+/*
+----------------------------------------------------------
+PARSE DATE WITHOUT TIMEZONE PROBLEMS
+----------------------------------------------------------
+*/
 
-function saveCoordinators() {
+function parseDateOnly(
+    dateValue
+) {
 
-    localStorage.setItem(
-        COORDINATORS_KEY,
-        JSON.stringify(coordinators)
+    if (!dateValue) {
+        return null;
+    }
+
+    var value =
+        String(
+            dateValue
+        ).trim();
+
+    /*
+    Expected backend format:
+        YYYY-MM-DD
+    */
+
+    var parts =
+        value.split("-");
+
+    if (
+        parts.length !== 3
+    ) {
+        return null;
+    }
+
+    var year =
+        Number(
+            parts[0]
+        );
+
+    var month =
+        Number(
+            parts[1]
+        );
+
+    var day =
+        Number(
+            parts[2]
+        );
+
+    if (
+        !Number.isInteger(year) ||
+        !Number.isInteger(month) ||
+        !Number.isInteger(day)
+    ) {
+        return null;
+    }
+
+    var date =
+        new Date(
+            year,
+            month - 1,
+            day
+        );
+
+    date.setHours(
+        0,
+        0,
+        0,
+        0
     );
 
+    return date;
 }
 
 
-/* ==========================================================
-   TAB EVENTS
-========================================================== */
+/*
+----------------------------------------------------------
+GET COORDINATOR FOR AGENCY
+----------------------------------------------------------
+*/
+
+function getCoordinatorForAgency(
+    agencyId
+) {
+
+    if (
+        agencyId === null ||
+        agencyId === undefined
+    ) {
+        return null;
+    }
+
+    for (
+        var i = 0;
+        i < coordinators.length;
+        i++
+    ) {
+
+        var coordinator =
+            coordinators[i];
+
+        if (!coordinator) {
+            continue;
+        }
+
+        var coordinatorAgencyId =
+            getCoordinatorAgencyId(
+                coordinator
+            );
+
+        if (
+            String(
+                coordinatorAgencyId
+            ) ===
+            String(
+                agencyId
+            )
+        ) {
+            return coordinator;
+        }
+    }
+
+    return null;
+}
+
+
+/*
+----------------------------------------------------------
+GET COORDINATOR AGENCY ID
+----------------------------------------------------------
+*/
+
+function getCoordinatorAgencyId(
+    coordinator
+) {
+
+    if (!coordinator) {
+        return null;
+    }
+
+    if (
+        coordinator.agency &&
+        typeof coordinator.agency ===
+        "object"
+    ) {
+
+        if (
+            coordinator.agency.id !==
+            undefined &&
+            coordinator.agency.id !==
+            null
+        ) {
+            return coordinator.agency.id;
+        }
+    }
+
+    if (
+        coordinator.agencyId !==
+        undefined &&
+        coordinator.agencyId !==
+        null
+    ) {
+        return coordinator.agencyId;
+    }
+
+    return null;
+}
+
+
+/*
+----------------------------------------------------------
+GET AGENCY CALCULATED STATUS
+----------------------------------------------------------
+*/
+
+function getAgencyCalculatedStatus(
+    agency
+) {
+
+    if (!agency) {
+        return "Inactive";
+    }
+
+    var coordinator =
+        getCoordinatorForAgency(
+            agency.id
+        );
+
+    /*
+    Agency status is based on the
+    Coordinator's start and end dates.
+    */
+
+    if (coordinator) {
+
+        return getStatusFromDates(
+            coordinator.startDate,
+            coordinator.endDate
+        );
+    }
+
+    /*
+    If Agency has no Coordinator,
+    there is no active training period.
+    */
+
+    return "Inactive";
+}
+
+
+/*
+----------------------------------------------------------
+REFRESH CALCULATED STATUSES
+----------------------------------------------------------
+*/
+
+function refreshCalculatedStatuses() {
+
+    /*
+    Coordinator status is calculated from dates.
+    */
+
+    for (
+        var i = 0;
+        i < coordinators.length;
+        i++
+    ) {
+
+        var coordinator =
+            coordinators[i];
+
+        if (!coordinator) {
+            continue;
+        }
+
+        coordinator.status =
+            getStatusFromDates(
+                coordinator.startDate,
+                coordinator.endDate
+            );
+    }
+
+
+    /*
+    Agency status is calculated from
+    the Agency's Coordinator.
+    */
+
+    for (
+        var j = 0;
+        j < agencies.length;
+        j++
+    ) {
+
+        var agency =
+            agencies[j];
+
+        if (!agency) {
+            continue;
+        }
+
+        agency.status =
+            getAgencyCalculatedStatus(
+                agency
+            );
+    }
+}
+
+
+/*
+==========================================================
+TAB EVENTS
+==========================================================
+*/
 
 function registerTabEvents() {
 
-    var agenciesTab = document.getElementById("agenciesTab");
+    var agenciesTab =
+        document.getElementById(
+            "agenciesTab"
+        );
 
-    var coordinatorsTab = document.getElementById("coordinatorsTab");
+    var coordinatorsTab =
+        document.getElementById(
+            "coordinatorsTab"
+        );
 
     if (agenciesTab) {
 
-        agenciesTab.addEventListener("click", function () {
+        agenciesTab.addEventListener(
+            "click",
+            function () {
 
-            showAgenciesPanel();
+                showAgenciesPanel();
 
-        });
-
+            }
+        );
     }
-
 
     if (coordinatorsTab) {
 
-        coordinatorsTab.addEventListener("click", function () {
+        coordinatorsTab.addEventListener(
+            "click",
+            function () {
 
-            showCoordinatorsPanel();
+                showCoordinatorsPanel();
 
-        });
-
+            }
+        );
     }
-
 }
 
 
-/* ==========================================================
-   SHOW AGENCIES PANEL
-========================================================== */
+/*
+==========================================================
+SHOW AGENCIES PANEL
+==========================================================
+*/
 
 function showAgenciesPanel() {
 
-    var agenciesTab = document.getElementById("agenciesTab");
+    var agenciesTab =
+        document.getElementById(
+            "agenciesTab"
+        );
 
-    var coordinatorsTab = document.getElementById("coordinatorsTab");
+    var coordinatorsTab =
+        document.getElementById(
+            "coordinatorsTab"
+        );
 
-    var agenciesPanel = document.getElementById("agenciesPanel");
+    var agenciesPanel =
+        document.getElementById(
+            "agenciesPanel"
+        );
 
     var coordinatorsPanel =
-        document.getElementById("coordinatorsPanel");
-
+        document.getElementById(
+            "coordinatorsPanel"
+        );
 
     if (agenciesTab) {
 
-        agenciesTab.classList.add("active");
-
+        agenciesTab.classList.add(
+            "active"
+        );
     }
-
 
     if (coordinatorsTab) {
 
-        coordinatorsTab.classList.remove("active");
-
+        coordinatorsTab.classList.remove(
+            "active"
+        );
     }
-
 
     if (agenciesPanel) {
 
-        agenciesPanel.classList.add("active");
-
+        agenciesPanel.classList.add(
+            "active"
+        );
     }
-
 
     if (coordinatorsPanel) {
 
-        coordinatorsPanel.classList.remove("active");
-
+        coordinatorsPanel.classList.remove(
+            "active"
+        );
     }
 
+    var search =
+        document.getElementById(
+            "agencySearch"
+        );
+
+    renderAgencies(
+        search
+            ? search.value
+            : ""
+    );
 }
 
 
-/* ==========================================================
-   SHOW COORDINATORS PANEL
-========================================================== */
+/*
+==========================================================
+SHOW COORDINATORS PANEL
+==========================================================
+*/
 
 function showCoordinatorsPanel() {
 
-    var agenciesTab = document.getElementById("agenciesTab");
+    var agenciesTab =
+        document.getElementById(
+            "agenciesTab"
+        );
 
-    var coordinatorsTab = document.getElementById("coordinatorsTab");
+    var coordinatorsTab =
+        document.getElementById(
+            "coordinatorsTab"
+        );
 
-    var agenciesPanel = document.getElementById("agenciesPanel");
+    var agenciesPanel =
+        document.getElementById(
+            "agenciesPanel"
+        );
 
     var coordinatorsPanel =
-        document.getElementById("coordinatorsPanel");
-
+        document.getElementById(
+            "coordinatorsPanel"
+        );
 
     if (agenciesTab) {
 
-        agenciesTab.classList.remove("active");
-
+        agenciesTab.classList.remove(
+            "active"
+        );
     }
-
 
     if (coordinatorsTab) {
 
-        coordinatorsTab.classList.add("active");
-
+        coordinatorsTab.classList.add(
+            "active"
+        );
     }
-
 
     if (agenciesPanel) {
 
-        agenciesPanel.classList.remove("active");
-
+        agenciesPanel.classList.remove(
+            "active"
+        );
     }
-
 
     if (coordinatorsPanel) {
 
-        coordinatorsPanel.classList.add("active");
-
+        coordinatorsPanel.classList.add(
+            "active"
+        );
     }
-
 
     populateAgencyDropdown();
 
-    renderCoordinators();
+    var search =
+        document.getElementById(
+            "coordinatorSearch"
+        );
 
+    renderCoordinators(
+        search
+            ? search.value
+            : ""
+    );
 }
 
 
-/* ==========================================================
-   AGENCY EVENTS
-========================================================== */
+/*
+==========================================================
+AGENCY EVENTS
+==========================================================
+*/
 
 function registerAgencyEvents() {
 
     var addAgencyBtn =
-        document.getElementById("addAgencyBtn");
+        document.getElementById(
+            "addAgencyBtn"
+        );
 
     var agencySearch =
-        document.getElementById("agencySearch");
+        document.getElementById(
+            "agencySearch"
+        );
 
     var saveAgencyBtn =
-        document.getElementById("saveAgencyBtn");
+        document.getElementById(
+            "saveAgencyBtn"
+        );
 
     var logoutBtn =
-        document.getElementById("logoutBtn");
-
+        document.getElementById(
+            "logoutBtn"
+        );
 
     if (addAgencyBtn) {
 
-        addAgencyBtn.addEventListener("click", function () {
+        addAgencyBtn.addEventListener(
+            "click",
+            function () {
 
-            openAgencyModal();
+                openAgencyModal();
 
-        });
-
+            }
+        );
     }
-
 
     if (agencySearch) {
 
-        agencySearch.addEventListener("input", function () {
+        agencySearch.addEventListener(
+            "input",
+            function () {
 
-            renderAgencies(agencySearch.value);
+                renderAgencies(
+                    agencySearch.value
+                );
 
-        });
-
+            }
+        );
     }
-
 
     if (saveAgencyBtn) {
 
-        saveAgencyBtn.addEventListener("click", function () {
+        saveAgencyBtn.addEventListener(
+            "click",
+            function () {
 
-            saveAgency();
+                saveAgency();
 
-        });
-
+            }
+        );
     }
-
 
     if (logoutBtn) {
 
-        logoutBtn.addEventListener("click", function (event) {
+        logoutBtn.addEventListener(
+            "click",
+            function (event) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            localStorage.removeItem("obt_logged_in_user");
+                logoutUser();
 
-            window.location.href =
-                "../login/login.html";
-
-        });
-
+            }
+        );
     }
-
 }
 
 
-/* ==========================================================
-   COORDINATOR EVENTS
-========================================================== */
+/*
+==========================================================
+COORDINATOR EVENTS
+==========================================================
+*/
 
 function registerCoordinatorEvents() {
 
     var addCoordinatorBtn =
-        document.getElementById("addCoordinatorBtn");
+        document.getElementById(
+            "addCoordinatorBtn"
+        );
 
     var coordinatorSearch =
-        document.getElementById("coordinatorSearch");
+        document.getElementById(
+            "coordinatorSearch"
+        );
 
     var saveCoordinatorBtn =
-        document.getElementById("saveCoordinatorBtn");
-
+        document.getElementById(
+            "saveCoordinatorBtn"
+        );
 
     if (addCoordinatorBtn) {
 
@@ -418,9 +904,7 @@ function registerCoordinatorEvents() {
 
             }
         );
-
     }
-
 
     if (coordinatorSearch) {
 
@@ -434,9 +918,7 @@ function registerCoordinatorEvents() {
 
             }
         );
-
     }
-
 
     if (saveCoordinatorBtn) {
 
@@ -448,42 +930,68 @@ function registerCoordinatorEvents() {
 
             }
         );
-
     }
-
 }
 
 
-/* ==========================================================
-   OPEN AGENCY MODAL
-========================================================== */
+/*
+==========================================================
+OPEN AGENCY MODAL
+==========================================================
+*/
 
 function openAgencyModal() {
 
     editingAgencyId = null;
 
-    var form = document.getElementById("agencyForm");
+    var form =
+        document.getElementById(
+            "agencyForm"
+        );
 
     if (form) {
-
         form.reset();
-
     }
 
+    /*
+    Agency does NOT contain date.
+
+    Rotation order is handled separately.
+
+    No 1-5 restriction.
+    */
+
+    setValue(
+        "agencyRotationOrder",
+        ""
+    );
+
+    var status =
+        document.getElementById(
+            "agencyStatus"
+        );
+
+    if (status) {
+
+        status.value =
+            "Active";
+    }
 
     var title =
-        document.getElementById("addAgencyModalLabel");
+        document.getElementById(
+            "addAgencyModalLabel"
+        );
 
     if (title) {
 
         title.innerHTML =
             '<i class="fas fa-building me-2"></i>Add Agency';
-
     }
 
-
     var modalElement =
-        document.getElementById("addAgencyModal");
+        document.getElementById(
+            "addAgencyModal"
+        );
 
     if (!modalElement) {
 
@@ -492,9 +1000,7 @@ function openAgencyModal() {
         );
 
         return;
-
     }
-
 
     var modal =
         bootstrap.Modal.getOrCreateInstance(
@@ -502,30 +1008,30 @@ function openAgencyModal() {
         );
 
     modal.show();
-
 }
 
 
-/* ==========================================================
-   OPEN COORDINATOR MODAL
-========================================================== */
+/*
+==========================================================
+OPEN COORDINATOR MODAL
+==========================================================
+*/
 
 function openCoordinatorModal() {
 
     editingCoordinatorId = null;
 
     var form =
-        document.getElementById("coordinatorForm");
+        document.getElementById(
+            "coordinatorForm"
+        );
 
     if (form) {
 
         form.reset();
-
     }
 
-
     populateAgencyDropdown();
-
 
     var title =
         document.getElementById(
@@ -536,19 +1042,18 @@ function openCoordinatorModal() {
 
         title.innerHTML =
             '<i class="fas fa-user-plus me-2"></i>Add Coordinator';
-
     }
 
-
     var status =
-        document.getElementById("coordinatorStatus");
+        document.getElementById(
+            "coordinatorStatus"
+        );
 
     if (status) {
 
-        status.value = "Active";
-
+        status.value =
+            "Active";
     }
-
 
     var modalElement =
         document.getElementById(
@@ -562,9 +1067,7 @@ function openCoordinatorModal() {
         );
 
         return;
-
     }
-
 
     var modal =
         bootstrap.Modal.getOrCreateInstance(
@@ -572,381 +1075,753 @@ function openCoordinatorModal() {
         );
 
     modal.show();
-
 }
 
 
-/* ==========================================================
-   SAVE AGENCY
-========================================================== */
+/*
+==========================================================
+SAVE AGENCY
+CREATE / UPDATE
+==========================================================
+*/
 
-function saveAgency() {
+async function saveAgency() {
 
     var name =
-        getValue("agencyName");
+        getValue(
+            "agencyName"
+        );
 
     var contactPerson =
-        getValue("agencyContactPerson");
+        getValue(
+            "agencyContactPerson"
+        );
 
     var contactNo =
-        getValue("agencyContactNo");
+        getValue(
+            "agencyContactNo"
+        );
 
     var email =
-        getValue("agencyEmail");
+        getValue(
+            "agencyEmail"
+        );
 
     var status =
-        getValue("agencyStatus");
+        getValue(
+            "agencyStatus"
+        );
 
+    var rotationOrderValue =
+        getValue(
+            "agencyRotationOrder"
+        );
+
+
+    /*
+    ------------------------------------------------------
+    VALIDATION
+    ------------------------------------------------------
+    */
 
     if (name === "") {
 
-        alert("Please enter Agency Name.");
+        alert(
+            "Please enter Agency Name."
+        );
 
         return;
-
     }
-
 
     if (contactPerson === "") {
 
-        alert("Please enter Contact Person.");
+        alert(
+            "Please enter Contact Person."
+        );
 
         return;
-
     }
-
 
     if (contactNo === "") {
 
-        alert("Please enter Contact No.");
+        alert(
+            "Please enter Contact No."
+        );
 
         return;
-
     }
-
 
     if (email === "") {
 
-        alert("Please enter Email.");
+        alert(
+            "Please enter Email."
+        );
 
         return;
-
     }
-
 
     if (status === "") {
 
-        status = "Active";
-
+        status =
+            "Active";
     }
 
 
-    if (editingAgencyId !== null) {
+    /*
+    ------------------------------------------------------
+    ROTATION ORDER
+    ------------------------------------------------------
 
-        updateAgency(
-            editingAgencyId,
-            name,
-            contactPerson,
-            contactNo,
-            email,
-            status
+    There is NO 1-5 restriction.
+    Backend decides validity.
+    */
+
+    if (rotationOrderValue === "") {
+
+        alert(
+            "Please enter Rotation Order."
         );
 
-    } else {
+        return;
+    }
 
-        var agency = {
+    var rotationOrder =
+        Number(
+            rotationOrderValue
+        );
 
-            id: generateId(),
+    if (
+        !Number.isInteger(
+            rotationOrder
+        )
+    ) {
 
-            name: name,
+        alert(
+            "Rotation Order must be a whole number."
+        );
 
-            contactPerson: contactPerson,
-
-            contactNo: contactNo,
-
-            email: email,
-
-            status: status
-
-        };
-
-
-        agencies.push(agency);
-
+        return;
     }
 
 
-    saveAgencies();
+    /*
+    ------------------------------------------------------
+    AGENCY PAYLOAD
+    ------------------------------------------------------
 
-    renderAgencies();
+    IMPORTANT:
+    No date field is sent.
+    */
 
-    populateAgencyDropdown();
+    var agencyData = {
 
-    closeModal("addAgencyModal");
+        agencyName:
+            name,
 
+        contactPerson:
+            contactPerson,
+
+        phone:
+            contactNo,
+
+        email:
+            email,
+
+        status:
+            status
+    };
+
+
+    console.log(
+        "Agency payload:",
+        agencyData
+    );
+
+    console.log(
+        "Requested rotation order:",
+        rotationOrder
+    );
+
+
+    try {
+
+        /*
+        ==================================================
+        UPDATE EXISTING AGENCY
+        ==================================================
+        */
+
+        if (
+            editingAgencyId !==
+            null
+        ) {
+
+            await updateAgencyApi(
+                editingAgencyId,
+                agencyData
+            );
+
+
+            /*
+            Find rotation belonging ONLY
+            to this Agency.
+            */
+
+            var existingRotation =
+                null;
+
+            try {
+
+                existingRotation =
+                    await getRotationByAgencyId(
+                        editingAgencyId
+                    );
+
+            } catch (rotationError) {
+
+                console.warn(
+                    "No existing rotation found for Agency:",
+                    editingAgencyId
+                );
+            }
+
+
+            /*
+            Update existing rotation.
+            */
+
+            if (
+                existingRotation &&
+                existingRotation.id
+            ) {
+
+                await updateRotationApi(
+                    existingRotation.id,
+                    editingAgencyId,
+                    rotationOrder
+                );
+
+            }
+
+            /*
+            Create rotation if Agency
+            does not have one.
+            */
+
+            else {
+
+                await createRotationApi(
+                    editingAgencyId,
+                    rotationOrder
+                );
+            }
+
+
+            alert(
+                "Agency updated successfully."
+            );
+        }
+
+
+        /*
+        ==================================================
+        CREATE NEW AGENCY
+        ==================================================
+        */
+
+        else {
+
+            /*
+            STEP 1:
+            Create Agency.
+            */
+
+            var savedAgency =
+                await createAgencyApi(
+                    agencyData
+                );
+
+
+            /*
+            STEP 2:
+            Get REAL database Agency ID.
+            */
+
+            var newAgencyId =
+                savedAgency &&
+                savedAgency.id
+                    ? savedAgency.id
+                    : null;
+
+            if (!newAgencyId) {
+
+                throw new Error(
+                    "Agency was created, but its ID was not returned by the server."
+                );
+            }
+
+
+            console.log(
+                "New Agency ID:",
+                newAgencyId
+            );
+
+
+            /*
+            STEP 3:
+            Create rotation ONLY for
+            this newly created Agency.
+            */
+
+            await createRotationApi(
+                newAgencyId,
+                rotationOrder
+            );
+
+
+            alert(
+                "Agency created successfully."
+            );
+        }
+
+
+        /*
+        --------------------------------------------------
+        RELOAD BACKEND DATA
+        --------------------------------------------------
+        */
+
+        await reloadManagementData();
+
+
+        /*
+        --------------------------------------------------
+        RECALCULATE STATUS
+        --------------------------------------------------
+        */
+
+        refreshCalculatedStatuses();
+
+
+        /*
+        --------------------------------------------------
+        REFRESH UI
+        --------------------------------------------------
+        */
+
+        renderAgencies();
+        renderCoordinators();
+        populateAgencyDropdown();
+        updateDashboardData();
+
+
+        /*
+        --------------------------------------------------
+        CLOSE MODAL
+        --------------------------------------------------
+        */
+
+        closeModal(
+            "addAgencyModal"
+        );
+
+        editingAgencyId =
+            null;
+
+
+    } catch (error) {
+
+        console.error(
+            "Unable to save agency:",
+            error
+        );
+
+        handleApiError(
+            error
+        );
+    }
 }
 
 
-/* ==========================================================
-   UPDATE AGENCY
-========================================================== */
+/*
+==========================================================
+UPDATE AGENCY
+==========================================================
+*/
 
-function updateAgency(
+async function updateAgency(
     id,
-    name,
+    agencyName,
     contactPerson,
-    contactNo,
+    phone,
     email,
     status
 ) {
 
-    var index = findAgencyIndex(id);
+    var agencyData = {
 
-    if (index === -1) {
+        agencyName:
+            agencyName,
 
-        return;
+        contactPerson:
+            contactPerson,
 
+        phone:
+            phone,
+
+        email:
+            email,
+
+        status:
+            status
+    };
+
+
+    try {
+
+        await updateAgencyApi(
+            id,
+            agencyData
+        );
+
+        await loadAgencies();
+        await loadCoordinators();
+
+        refreshCalculatedStatuses();
+
+        renderAgencies();
+        populateAgencyDropdown();
+        updateDashboardData();
+
+    } catch (error) {
+
+        handleApiError(
+            error
+        );
     }
-
-
-    agencies[index].name = name;
-
-    agencies[index].contactPerson =
-        contactPerson;
-
-    agencies[index].contactNo =
-        contactNo;
-
-    agencies[index].email = email;
-
-    agencies[index].status = status;
-
 }
 
 
-/* ==========================================================
-   SAVE COORDINATOR
-========================================================== */
+/*
+==========================================================
+SAVE COORDINATOR
+CREATE / UPDATE
+==========================================================
+*/
 
-function saveCoordinator() {
+async function saveCoordinator() {
 
     var name =
-        getValue("coordinatorName");
+        getValue(
+            "coordinatorName"
+        );
 
     var agencyId =
-        getValue("coordinatorAgency");
+        getValue(
+            "coordinatorAgency"
+        );
 
     var batchName =
-        getValue("coordinatorBatchName");
+        getValue(
+            "coordinatorBatchName"
+        );
 
     var designation =
-        getValue("coordinatorDesignation");
+        getValue(
+            "coordinatorDesignation"
+        );
 
     var startDate =
-        getValue("coordinatorStartDate");
+        getValue(
+            "coordinatorStartDate"
+        );
 
     var endDate =
-        getValue("coordinatorEndDate");
+        getValue(
+            "coordinatorEndDate"
+        );
 
     var phone =
-        getValue("coordinatorPhone");
+        getValue(
+            "coordinatorPhone"
+        );
 
     var email =
-        getValue("coordinatorEmail");
+        getValue(
+            "coordinatorEmail"
+        );
 
     var status =
-        getValue("coordinatorStatus");
+        getValue(
+            "coordinatorStatus"
+        );
 
 
-    /* ======================================================
-       VALIDATION
-    ====================================================== */
+    /*
+    ------------------------------------------------------
+    VALIDATION
+    ------------------------------------------------------
+    */
 
     if (name === "") {
 
-        alert("Please enter Coordinator Name.");
+        alert(
+            "Please enter Coordinator Name."
+        );
 
         return;
-
     }
-
 
     if (agencyId === "") {
 
-        alert("Please select Agency.");
+        alert(
+            "Please select Agency."
+        );
 
         return;
-
     }
-
 
     if (batchName === "") {
 
-        alert("Please enter Batch Name.");
+        alert(
+            "Please enter Batch Name."
+        );
 
         return;
-
     }
-
 
     if (designation === "") {
 
-        alert("Please enter Designation.");
+        alert(
+            "Please enter Designation."
+        );
 
         return;
-
     }
-
 
     if (startDate === "") {
 
-        alert("Please select Start Date.");
+        alert(
+            "Please select Start Date."
+        );
 
         return;
-
     }
-
 
     if (endDate === "") {
 
-        alert("Please select End Date.");
+        alert(
+            "Please select End Date."
+        );
 
         return;
-
     }
 
-
-    if (endDate < startDate) {
+    if (
+        endDate <
+        startDate
+    ) {
 
         alert(
             "End Date cannot be earlier than Start Date."
         );
 
         return;
-
     }
-
 
     if (phone === "") {
 
-        alert("Please enter Phone.");
+        alert(
+            "Please enter Phone."
+        );
 
         return;
-
     }
-
 
     if (email === "") {
 
-        alert("Please enter Email.");
-
-        return;
-
-    }
-
-
-    if (status === "") {
-
-        status = "Active";
-
-    }
-
-
-    /* ======================================================
-       GET AGENCY NAME
-    ====================================================== */
-
-    var agencyName =
-        getAgencyNameById(agencyId);
-
-
-    /* ======================================================
-       UPDATE EXISTING COORDINATOR
-    ====================================================== */
-
-    if (editingCoordinatorId !== null) {
-
-        updateCoordinator(
-            editingCoordinatorId,
-            name,
-            agencyId,
-            agencyName,
-            batchName,
-            startDate,
-            endDate,
-            designation,
-            phone,
-            email,
-            status
+        alert(
+            "Please enter Email."
         );
 
+        return;
     }
 
 
-    /* ======================================================
-       ADD NEW COORDINATOR
-    ====================================================== */
+    /*
+    ------------------------------------------------------
+    CALCULATE STATUS
+    ------------------------------------------------------
 
-    else {
+    Do NOT rely on manually entered status.
+    */
 
-        var coordinator = {
-
-            id: generateId(),
-
-            name: name,
-
-            agencyId: agencyId,
-
-            agency: agencyName,
-
-            batchName: batchName,
-
-            startDate: startDate,
-
-            endDate: endDate,
-
-            designation: designation,
-
-            phone: phone,
-
-            email: email,
-
-            status: status
-
-        };
+    var calculatedStatus =
+        getStatusFromDates(
+            startDate,
+            endDate
+        );
 
 
-        coordinators.push(coordinator);
+    /*
+    ------------------------------------------------------
+    COORDINATOR PAYLOAD
+    ------------------------------------------------------
+    */
 
+    var coordinatorData = {
+
+        name:
+            name,
+
+        agency: {
+
+            id:
+                Number(
+                    agencyId
+                )
+        },
+
+        batchName:
+            batchName,
+
+        startDate:
+            startDate,
+
+        endDate:
+            endDate,
+
+        designation:
+            designation,
+
+        phone:
+            phone,
+
+        email:
+            email,
+
+        /*
+        Status is calculated from dates.
+        */
+
+        status:
+            calculatedStatus
+    };
+
+
+    console.log(
+        "Coordinator payload:",
+        coordinatorData
+    );
+
+
+    try {
+
+        /*
+        ==================================================
+        UPDATE
+        ==================================================
+        */
+
+        if (
+            editingCoordinatorId !==
+            null
+        ) {
+
+            await updateCoordinatorApi(
+                editingCoordinatorId,
+                coordinatorData
+            );
+
+            alert(
+                "Coordinator updated successfully."
+            );
+        }
+
+
+        /*
+        ==================================================
+        CREATE
+        ==================================================
+        */
+
+        else {
+
+            await createCoordinatorApi(
+                coordinatorData
+            );
+
+            alert(
+                "Coordinator created successfully."
+            );
+        }
+
+
+        /*
+        --------------------------------------------------
+        RELOAD DATA
+        --------------------------------------------------
+        */
+
+        await reloadManagementData();
+
+
+        /*
+        --------------------------------------------------
+        RECALCULATE STATUS
+        --------------------------------------------------
+        */
+
+        refreshCalculatedStatuses();
+
+
+        /*
+        --------------------------------------------------
+        REFRESH UI
+        --------------------------------------------------
+        */
+
+        renderAgencies();
+        renderCoordinators();
+        populateAgencyDropdown();
+        updateDashboardData();
+
+
+        /*
+        --------------------------------------------------
+        CLOSE MODAL
+        --------------------------------------------------
+        */
+
+        closeModal(
+            "addCoordinatorModal"
+        );
+
+        editingCoordinatorId =
+            null;
+
+
+    } catch (error) {
+
+        console.error(
+            "Unable to save coordinator:",
+            error
+        );
+
+        handleApiError(
+            error
+        );
     }
-
-
-    /* ======================================================
-       SAVE
-    ====================================================== */
-
-    saveCoordinators();
-
-    renderCoordinators();
-
-    closeModal("addCoordinatorModal");
-
-
-    /* ======================================================
-       IMPORTANT:
-       UPDATE DASHBOARD DATA
-    ====================================================== */
-
-    updateDashboardData();
-
 }
 
 
-/* ==========================================================
-   UPDATE COORDINATOR
-========================================================== */
+/*
+==========================================================
+UPDATE COORDINATOR
+==========================================================
+*/
 
-function updateCoordinator(
+async function updateCoordinator(
     id,
     name,
     agencyId,
@@ -960,45 +1835,90 @@ function updateCoordinator(
     status
 ) {
 
-    var index =
-        findCoordinatorIndex(id);
+    /*
+    Calculate status from dates.
+    */
 
-    if (index === -1) {
+    var calculatedStatus =
+        getStatusFromDates(
+            startDate,
+            endDate
+        );
 
-        return;
 
+    var coordinatorData = {
+
+        name:
+            name,
+
+        agency: {
+
+            id:
+                Number(
+                    agencyId
+                )
+        },
+
+        batchName:
+            batchName,
+
+        startDate:
+            startDate,
+
+        endDate:
+            endDate,
+
+        designation:
+            designation,
+
+        phone:
+            phone,
+
+        email:
+            email,
+
+        status:
+            calculatedStatus
+    };
+
+
+    try {
+
+        await updateCoordinatorApi(
+            id,
+            coordinatorData
+        );
+
+        await loadCoordinators();
+        await loadAgencies();
+
+        refreshCalculatedStatuses();
+
+        renderCoordinators();
+        renderAgencies();
+
+        populateAgencyDropdown();
+
+        updateDashboardData();
+
+    } catch (error) {
+
+        handleApiError(
+            error
+        );
     }
-
-
-    coordinators[index].name = name;
-
-    coordinators[index].agencyId = agencyId;
-
-    coordinators[index].agency = agencyName;
-
-    coordinators[index].batchName = batchName;
-
-    coordinators[index].startDate = startDate;
-
-    coordinators[index].endDate = endDate;
-
-    coordinators[index].designation =
-        designation;
-
-    coordinators[index].phone = phone;
-
-    coordinators[index].email = email;
-
-    coordinators[index].status = status;
-
 }
 
 
-/* ==========================================================
-   RENDER AGENCIES
-========================================================== */
+/*
+==========================================================
+RENDER AGENCIES
+==========================================================
+*/
 
-function renderAgencies(searchText) {
+function renderAgencies(
+    searchText
+) {
 
     var tableBody =
         document.getElementById(
@@ -1006,110 +1926,176 @@ function renderAgencies(searchText) {
         );
 
     if (!tableBody) {
-
         return;
-
     }
 
 
+    /*
+    Always calculate current status
+    before rendering.
+    */
+
+    refreshCalculatedStatuses();
+
+
     searchText =
-        searchText || "";
-
-    searchText =
-        searchText.toLowerCase().trim();
-
-
-    tableBody.innerHTML = "";
-
-
-    var filteredAgencies = [];
+        (
+            searchText ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
 
-    var i;
+    tableBody.innerHTML =
+        "";
 
 
-    for (i = 0; i < agencies.length; i++) {
+    var filteredAgencies =
+        [];
 
-        var agency = agencies[i];
+
+    for (
+        var i = 0;
+        i < agencies.length;
+        i++
+    ) {
+
+        var agency =
+            agencies[i];
+
+        if (!agency) {
+            continue;
+        }
 
 
         var searchableText =
             (
-                agency.name +
+                (agency.agencyName || "") +
                 " " +
-                agency.contactPerson +
+                (agency.contactPerson || "") +
                 " " +
-                agency.contactNo +
+                (agency.phone || "") +
                 " " +
-                agency.email +
+                (agency.email || "") +
                 " " +
-                agency.status
-            ).toLowerCase();
+                (agency.status || "")
+            )
+            .toLowerCase();
 
 
         if (
             searchText === "" ||
-            searchableText.indexOf(searchText) !== -1
+            searchableText.indexOf(
+                searchText
+            ) !== -1
         ) {
 
-            filteredAgencies.push(agency);
-
+            filteredAgencies.push(
+                agency
+            );
         }
-
     }
 
 
-    if (filteredAgencies.length === 0) {
+    if (
+        filteredAgencies.length ===
+        0
+    ) {
 
         tableBody.innerHTML =
-            '<tr>' +
+            "<tr>" +
                 '<td colspan="7" class="text-center">' +
-                    'No agencies found.' +
-                '</td>' +
-            '</tr>';
+                    "No agencies found." +
+                "</td>" +
+            "</tr>";
 
-        updateAgencyEntryInfo(0);
+        updateAgencyEntryInfo(
+            0
+        );
 
         return;
-
     }
 
 
-    for (i = 0; i < filteredAgencies.length; i++) {
+    for (
+        var j = 0;
+        j < filteredAgencies.length;
+        j++
+    ) {
 
         var currentAgency =
-            filteredAgencies[i];
+            filteredAgencies[j];
+
+
+        /*
+        Calculate Agency status from
+        its Coordinator's dates.
+        */
+
+        var calculatedAgencyStatus =
+            getAgencyCalculatedStatus(
+                currentAgency
+            );
+
+
+        /*
+        Keep local object synchronized.
+        */
+
+        currentAgency.status =
+            calculatedAgencyStatus;
 
 
         var row =
-            document.createElement("tr");
+            document.createElement(
+                "tr"
+            );
 
 
         var statusClass =
-            currentAgency.status === "Active"
+            calculatedAgencyStatus
+                .toUpperCase() ===
+            "ACTIVE"
                 ? "bg-success"
                 : "bg-secondary";
 
 
+        var contactPerson =
+            currentAgency.contactPerson ||
+            "—";
+
+
+        /*
+        Rotation belongs to this Agency only.
+        */
+
+        var rotationOrder =
+            getRotationOrderFromLoadedData(
+                currentAgency.id
+            );
+
+
         row.innerHTML =
-
             "<td>" +
-                (i + 1) +
-            "</td>" +
-
-            "<td>" +
-                escapeHtml(currentAgency.name) +
+                (j + 1) +
             "</td>" +
 
             "<td>" +
                 escapeHtml(
-                    currentAgency.contactPerson
+                    currentAgency.agencyName
                 ) +
             "</td>" +
 
             "<td>" +
                 escapeHtml(
-                    currentAgency.contactNo
+                    contactPerson
+                ) +
+            "</td>" +
+
+            "<td>" +
+                escapeHtml(
+                    currentAgency.phone
                 ) +
             "</td>" +
 
@@ -1120,41 +2106,36 @@ function renderAgencies(searchText) {
             "</td>" +
 
             "<td>" +
-
                 '<span class="badge ' +
                     statusClass +
                 '">' +
-
                     escapeHtml(
-                        currentAgency.status
+                        calculatedAgencyStatus
                     ) +
-
                 "</span>" +
-
             "</td>" +
 
             "<td>" +
 
                 '<button type="button" ' +
-                        'class="btn btn-sm btn-warning me-1" ' +
-                        'onclick="editAgency(\'' +
-                            escapeForAttribute(
-                                currentAgency.id
-                            ) +
-                        '\')">' +
+                    'class="btn btn-sm btn-warning me-1" ' +
+                    'onclick="editAgency(\'' +
+                    escapeForAttribute(
+                        currentAgency.id
+                    ) +
+                    "')\">" +
 
                     '<i class="fas fa-pen"></i>' +
 
                 "</button>" +
 
-
                 '<button type="button" ' +
-                        'class="btn btn-sm btn-danger" ' +
-                        'onclick="deleteAgency(\'' +
-                            escapeForAttribute(
-                                currentAgency.id
-                            ) +
-                        '\')">' +
+                    'class="btn btn-sm btn-danger" ' +
+                    'onclick="deleteAgency(\'' +
+                    escapeForAttribute(
+                        currentAgency.id
+                    ) +
+                    "')\">" +
 
                     '<i class="fas fa-trash"></i>' +
 
@@ -1163,23 +2144,27 @@ function renderAgencies(searchText) {
             "</td>";
 
 
-        tableBody.appendChild(row);
-
+        tableBody.appendChild(
+            row
+        );
     }
 
 
     updateAgencyEntryInfo(
         filteredAgencies.length
     );
-
 }
 
 
-/* ==========================================================
-   RENDER COORDINATORS
-========================================================== */
+/*
+==========================================================
+RENDER COORDINATORS
+==========================================================
+*/
 
-function renderCoordinators(searchText) {
+function renderCoordinators(
+    searchText
+) {
 
     var tableBody =
         document.getElementById(
@@ -1187,113 +2172,188 @@ function renderCoordinators(searchText) {
         );
 
     if (!tableBody) {
-
         return;
-
     }
 
 
+    /*
+    Calculate status before rendering.
+    */
+
+    refreshCalculatedStatuses();
+
+
     searchText =
-        searchText || "";
-
-    searchText =
-        searchText.toLowerCase().trim();
-
-
-    tableBody.innerHTML = "";
-
-
-    var filteredCoordinators = [];
+        (
+            searchText ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
 
 
-    var i;
+    tableBody.innerHTML =
+        "";
 
 
-    for (i = 0; i < coordinators.length; i++) {
+    var filteredCoordinators =
+        [];
+
+
+    for (
+        var i = 0;
+        i < coordinators.length;
+        i++
+    ) {
 
         var coordinator =
             coordinators[i];
 
+        if (!coordinator) {
+            continue;
+        }
+
+
+        var agencyName =
+            coordinator.agency &&
+            typeof coordinator.agency ===
+            "object"
+                ? (
+                    coordinator.agency.agencyName ||
+                    ""
+                )
+                : "";
+
+
+        var calculatedStatus =
+            getStatusFromDates(
+                coordinator.startDate,
+                coordinator.endDate
+            );
+
+
+        coordinator.status =
+            calculatedStatus;
+
 
         var searchableText =
             (
-                coordinator.name +
+                (coordinator.name || "") +
                 " " +
-                coordinator.agency +
+                agencyName +
                 " " +
-                coordinator.batchName +
+                (coordinator.batchName || "") +
                 " " +
-                coordinator.designation +
+                (coordinator.startDate || "") +
                 " " +
-                coordinator.phone +
+                (coordinator.endDate || "") +
                 " " +
-                coordinator.email +
+                (coordinator.designation || "") +
                 " " +
-                coordinator.status
-            ).toLowerCase();
+                (coordinator.phone || "") +
+                " " +
+                (coordinator.email || "") +
+                " " +
+                calculatedStatus
+            )
+            .toLowerCase();
 
 
         if (
             searchText === "" ||
-            searchableText.indexOf(searchText) !== -1
+            searchableText.indexOf(
+                searchText
+            ) !== -1
         ) {
 
             filteredCoordinators.push(
                 coordinator
             );
-
         }
-
     }
 
 
-    if (filteredCoordinators.length === 0) {
+    if (
+        filteredCoordinators.length ===
+        0
+    ) {
 
         tableBody.innerHTML =
-            '<tr>' +
-                '<td colspan="10" class="text-center">' +
-                    'No coordinators found.' +
-                '</td>' +
-            '</tr>';
+            "<tr>" +
+                '<td colspan="11" class="text-center">' +
+                    "No coordinators found." +
+                "</td>" +
+            "</tr>";
 
-        updateCoordinatorEntryInfo(0);
+        updateCoordinatorEntryInfo(
+            0
+        );
 
         return;
-
     }
 
 
     for (
-        i = 0;
-        i < filteredCoordinators.length;
-        i++
+        var j = 0;
+        j < filteredCoordinators.length;
+        j++
     ) {
 
         var currentCoordinator =
-            filteredCoordinators[i];
+            filteredCoordinators[j];
 
 
-        var row =
-            document.createElement("tr");
+        var currentAgencyName =
+            currentCoordinator.agency &&
+            typeof currentCoordinator.agency ===
+            "object"
+                ? (
+                    currentCoordinator.agency.agencyName ||
+                    ""
+                )
+                : "";
 
 
-        var statusClass =
-            currentCoordinator.status === "Active"
-                ? "bg-success"
-                : "bg-secondary";
+        var startDate =
+            formatDate(
+                currentCoordinator.startDate
+            );
 
 
-        var dateRange =
-            formatDateRange(
+        var endDate =
+            formatDate(
+                currentCoordinator.endDate
+            );
+
+
+        var calculatedCoordinatorStatus =
+            getStatusFromDates(
                 currentCoordinator.startDate,
                 currentCoordinator.endDate
             );
 
 
-        row.innerHTML =
+        currentCoordinator.status =
+            calculatedCoordinatorStatus;
 
+
+        var row =
+            document.createElement(
+                "tr"
+            );
+
+
+        var statusClass =
+            calculatedCoordinatorStatus
+                .toUpperCase() ===
+            "ACTIVE"
+                ? "bg-success"
+                : "bg-secondary";
+
+
+        row.innerHTML =
             "<td>" +
-                (i + 1) +
+                (j + 1) +
             "</td>" +
 
             "<td>" +
@@ -1304,7 +2364,7 @@ function renderCoordinators(searchText) {
 
             "<td>" +
                 escapeHtml(
-                    currentCoordinator.agency
+                    currentAgencyName
                 ) +
             "</td>" +
 
@@ -1316,7 +2376,13 @@ function renderCoordinators(searchText) {
 
             "<td>" +
                 escapeHtml(
-                    dateRange
+                    startDate
+                ) +
+            "</td>" +
+
+            "<td>" +
+                escapeHtml(
+                    endDate
                 ) +
             "</td>" +
 
@@ -1339,41 +2405,36 @@ function renderCoordinators(searchText) {
             "</td>" +
 
             "<td>" +
-
                 '<span class="badge ' +
                     statusClass +
                 '">' +
-
                     escapeHtml(
-                        currentCoordinator.status
+                        calculatedCoordinatorStatus
                     ) +
-
                 "</span>" +
-
             "</td>" +
 
             "<td>" +
 
                 '<button type="button" ' +
-                        'class="btn btn-sm btn-warning me-1" ' +
-                        'onclick="editCoordinator(\'' +
-                            escapeForAttribute(
-                                currentCoordinator.id
-                            ) +
-                        '\')">' +
+                    'class="btn btn-sm btn-warning me-1" ' +
+                    'onclick="editCoordinator(\'' +
+                    escapeForAttribute(
+                        currentCoordinator.id
+                    ) +
+                    "')\">" +
 
                     '<i class="fas fa-pen"></i>' +
 
                 "</button>" +
 
-
                 '<button type="button" ' +
-                        'class="btn btn-sm btn-danger" ' +
-                        'onclick="deleteCoordinator(\'' +
-                            escapeForAttribute(
-                                currentCoordinator.id
-                            ) +
-                        '\')">' +
+                    'class="btn btn-sm btn-danger" ' +
+                    'onclick="deleteCoordinator(\'' +
+                    escapeForAttribute(
+                        currentCoordinator.id
+                    ) +
+                    "')\">" +
 
                     '<i class="fas fa-trash"></i>' +
 
@@ -1382,102 +2443,64 @@ function renderCoordinators(searchText) {
             "</td>";
 
 
-        tableBody.appendChild(row);
-
+        tableBody.appendChild(
+            row
+        );
     }
 
 
     updateCoordinatorEntryInfo(
         filteredCoordinators.length
     );
-
 }
 
 
-/* ==========================================================
-   FORMAT DATE RANGE
-========================================================== */
+/*
+==========================================================
+FORMAT DATE
+==========================================================
+*/
 
-function formatDateRange(startDate, endDate) {
-
-    if (!startDate && !endDate) {
-
-        return "";
-
-    }
-
-
-    if (!startDate) {
-
-        return formatDate(endDate);
-
-    }
-
-
-    if (!endDate) {
-
-        return formatDate(startDate);
-
-    }
-
-
-    return (
-        formatDate(startDate) +
-        " to " +
-        formatDate(endDate)
-    );
-
-}
-
-
-/* ==========================================================
-   FORMAT DATE
-   OUTPUT:
-   02-03-2026
-========================================================== */
-
-function formatDate(dateString) {
+function formatDate(
+    dateString
+) {
 
     if (!dateString) {
-
         return "";
-
     }
-
 
     var parts =
-        dateString.split("-");
+        String(
+            dateString
+        ).split("-");
 
 
-    if (parts.length !== 3) {
+    if (
+        parts.length !==
+        3
+    ) {
 
-        return dateString;
-
+        return String(
+            dateString
+        );
     }
-
-
-    var year = parts[0];
-
-    var month = parts[1];
-
-    var day = parts[2];
 
 
     return (
-        day +
+        parts[2] +
         "-" +
-        month +
+        parts[1] +
         "-" +
-        year
+        parts[0]
     );
-
 }
 
 
-/* ==========================================================
-   POPULATE AGENCY DROPDOWN
-========================================================== */
-
+/*
+==========================================================
+POPULATE COORDINATOR AGENCY DROPDOWN
+==========================================================
+*/
 function populateAgencyDropdown() {
 
     var select =
@@ -1486,76 +2509,131 @@ function populateAgencyDropdown() {
         );
 
     if (!select) {
-
         return;
-
     }
-
 
     var currentValue =
         select.value;
 
-
     select.innerHTML =
         '<option value="">Select Agency</option>';
 
-
-    var i;
-
-
-    for (i = 0; i < agencies.length; i++) {
+    for (
+        var i = 0;
+        i < agencies.length;
+        i++
+    ) {
 
         var agency =
             agencies[i];
 
-
-        if (agency.status === "Inactive") {
-
+        if (!agency) {
             continue;
-
         }
 
+        /*
+        ------------------------------------------------------
+        SHOW ALL AGENCIES
+        ------------------------------------------------------
+
+        Both Active and Inactive agencies are displayed.
+
+        The dropdown is intentionally NOT filtering
+        agencies based on status.
+        ------------------------------------------------------
+        */
 
         var option =
-            document.createElement("option");
+            document.createElement(
+                "option"
+            );
 
+        /*
+        Store the real Agency ID.
+        */
 
         option.value =
-            agency.id;
+            String(
+                agency.id
+            );
 
+        /*
+        Display Agency Name.
+        */
 
         option.textContent =
-            agency.name;
+            agency.agencyName;
 
-
-        select.appendChild(option);
-
+        select.appendChild(
+            option
+        );
     }
 
+    /*
+    Restore previously selected Agency
+    when possible.
+    */
 
-    if (currentValue !== "") {
+    if (
+        currentValue !== ""
+    ) {
 
         select.value =
             currentValue;
+    }
+}
 
+/*
+==========================================================
+FIND COORDINATOR BY ID
+==========================================================
+*/
+
+function findCoordinatorById(
+    id
+) {
+
+    for (
+        var i = 0;
+        i < coordinators.length;
+        i++
+    ) {
+
+        if (
+            String(
+                coordinators[i].id
+            ) ===
+            String(
+                id
+            )
+        ) {
+
+            return coordinators[i];
+        }
     }
 
+    return null;
 }
 
 
-/* ==========================================================
-   EDIT AGENCY
-========================================================== */
+/*
+==========================================================
+EDIT AGENCY
+==========================================================
+*/
 
-function editAgency(id) {
+async function editAgency(
+    id
+) {
 
     var index =
-        findAgencyIndex(id);
+        findAgencyIndex(
+            id
+        );
+
 
     if (index === -1) {
-
         return;
-
     }
 
 
@@ -1563,12 +2641,13 @@ function editAgency(id) {
         agencies[index];
 
 
-    editingAgencyId = id;
+    editingAgencyId =
+        agency.id;
 
 
     setValue(
         "agencyName",
-        agency.name
+        agency.agencyName
     );
 
 
@@ -1580,7 +2659,7 @@ function editAgency(id) {
 
     setValue(
         "agencyContactNo",
-        agency.contactNo
+        agency.phone
     );
 
 
@@ -1590,10 +2669,68 @@ function editAgency(id) {
     );
 
 
+    /*
+    Calculate current Agency status
+    instead of trusting stored status.
+    */
+
+    var calculatedAgencyStatus =
+        getAgencyCalculatedStatus(
+            agency
+        );
+
+
     setValue(
         "agencyStatus",
-        agency.status
+        calculatedAgencyStatus
     );
+
+
+    /*
+    Get rotation belonging ONLY
+    to this Agency.
+    */
+
+    var rotation =
+        null;
+
+
+    try {
+
+        rotation =
+            await getRotationByAgencyId(
+                agency.id
+            );
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to retrieve rotation for Agency:",
+            agency.id
+        );
+    }
+
+
+    if (
+        rotation &&
+        rotation.rotationOrder !==
+        undefined
+    ) {
+
+        setValue(
+            "agencyRotationOrder",
+            rotation.rotationOrder
+        );
+
+    } else {
+
+        setValue(
+            "agencyRotationOrder",
+            getRotationOrderFromLoadedData(
+                agency.id
+            )
+        );
+    }
 
 
     var title =
@@ -1606,7 +2743,6 @@ function editAgency(id) {
 
         title.innerHTML =
             '<i class="fas fa-pen me-2"></i>Edit Agency';
-
     }
 
 
@@ -1623,7 +2759,6 @@ function editAgency(id) {
         );
 
         return;
-
     }
 
 
@@ -1634,23 +2769,27 @@ function editAgency(id) {
 
 
     modal.show();
-
 }
 
 
-/* ==========================================================
-   EDIT COORDINATOR
-========================================================== */
+/*
+==========================================================
+EDIT COORDINATOR
+==========================================================
+*/
 
-function editCoordinator(id) {
+function editCoordinator(
+    id
+) {
 
     var index =
-        findCoordinatorIndex(id);
+        findCoordinatorIndex(
+            id
+        );
+
 
     if (index === -1) {
-
         return;
-
     }
 
 
@@ -1658,7 +2797,8 @@ function editCoordinator(id) {
         coordinators[index];
 
 
-    editingCoordinatorId = id;
+    editingCoordinatorId =
+        coordinator.id;
 
 
     populateAgencyDropdown();
@@ -1670,10 +2810,29 @@ function editCoordinator(id) {
     );
 
 
-    setValue(
-        "coordinatorAgency",
-        coordinator.agencyId
-    );
+    if (
+        coordinator.agency &&
+        typeof coordinator.agency ===
+        "object"
+    ) {
+
+        setValue(
+            "coordinatorAgency",
+            coordinator.agency.id
+        );
+
+    } else if (
+        coordinator.agencyId !==
+        undefined &&
+        coordinator.agencyId !==
+        null
+    ) {
+
+        setValue(
+            "coordinatorAgency",
+            coordinator.agencyId
+        );
+    }
 
 
     setValue(
@@ -1712,9 +2871,20 @@ function editCoordinator(id) {
     );
 
 
+    /*
+    Calculate status from dates.
+    */
+
+    var calculatedStatus =
+        getStatusFromDates(
+            coordinator.startDate,
+            coordinator.endDate
+        );
+
+
     setValue(
         "coordinatorStatus",
-        coordinator.status
+        calculatedStatus
     );
 
 
@@ -1728,7 +2898,6 @@ function editCoordinator(id) {
 
         title.innerHTML =
             '<i class="fas fa-pen me-2"></i>Edit Coordinator';
-
     }
 
 
@@ -1745,7 +2914,6 @@ function editCoordinator(id) {
         );
 
         return;
-
     }
 
 
@@ -1756,23 +2924,133 @@ function editCoordinator(id) {
 
 
     modal.show();
-
 }
 
 
-/* ==========================================================
-   DELETE AGENCY
-========================================================== */
+/*
+==========================================================
+GET ROTATION ORDER FOR AGENCY
+==========================================================
+*/
 
-function deleteAgency(id) {
+function getRotationOrderFromLoadedData(
+    agencyId
+) {
+
+    for (
+        var i = 0;
+        i < rotations.length;
+        i++
+    ) {
+
+        var rotation =
+            rotations[i];
+
+        if (!rotation) {
+            continue;
+        }
+
+
+        var rotationAgencyId =
+            getRotationAgencyId(
+                rotation
+            );
+
+
+        /*
+        Compare Rotation Agency ID
+        with requested Agency ID.
+        */
+
+        if (
+            String(
+                rotationAgencyId
+            ) ===
+            String(
+                agencyId
+            )
+        ) {
+
+            return (
+                rotation.rotationOrder !==
+                undefined
+                    ? rotation.rotationOrder
+                    : ""
+            );
+        }
+    }
+
+
+    return "";
+}
+
+
+/*
+==========================================================
+GET ROTATION AGENCY ID
+==========================================================
+*/
+
+function getRotationAgencyId(
+    rotation
+) {
+
+    if (!rotation) {
+        return null;
+    }
+
+
+    if (
+        rotation.agency &&
+        typeof rotation.agency ===
+        "object"
+    ) {
+
+        if (
+            rotation.agency.id !==
+            undefined &&
+            rotation.agency.id !==
+            null
+        ) {
+
+            return rotation.agency.id;
+        }
+    }
+
+
+    if (
+        rotation.agencyId !==
+        undefined &&
+        rotation.agencyId !==
+        null
+    ) {
+
+        return rotation.agencyId;
+    }
+
+
+    return null;
+}
+
+
+/*
+==========================================================
+DELETE AGENCY
+==========================================================
+*/
+
+async function deleteAgency(
+    id
+) {
 
     var index =
-        findAgencyIndex(id);
+        findAgencyIndex(
+            id
+        );
+
 
     if (index === -1) {
-
         return;
-
     }
 
 
@@ -1783,80 +3061,108 @@ function deleteAgency(id) {
     var confirmed =
         confirm(
             'Are you sure you want to delete "' +
-            agency.name +
+            agency.agencyName +
             '"?'
         );
 
 
     if (!confirmed) {
-
         return;
-
     }
 
 
-    var coordinatorUsingAgency = false;
+    try {
+
+        /*
+        Delete rotation belonging ONLY
+        to this Agency first.
+        */
+
+        try {
+
+            var rotation =
+                await getRotationByAgencyId(
+                    id
+                );
 
 
-    var i;
+            if (
+                rotation &&
+                rotation.id
+            ) {
 
+                await deleteRotationApi(
+                    rotation.id
+                );
+            }
 
-    for (
-        i = 0;
-        i < coordinators.length;
-        i++
-    ) {
+        } catch (rotationError) {
 
-        if (
-            coordinators[i].agencyId === id
-        ) {
-
-            coordinatorUsingAgency = true;
-
-            break;
-
+            console.warn(
+                "No rotation found for Agency:",
+                id
+            );
         }
 
-    }
 
+        /*
+        Delete Agency.
+        */
 
-    if (coordinatorUsingAgency) {
-
-        alert(
-            "This agency is assigned to a coordinator. " +
-            "Please remove or change the coordinator assignment first."
+        await deleteAgencyApi(
+            id
         );
 
-        return;
 
+        alert(
+            "Agency deleted successfully."
+        );
+
+
+        await reloadManagementData();
+
+
+        refreshCalculatedStatuses();
+
+
+        renderAgencies();
+        renderCoordinators();
+        populateAgencyDropdown();
+        updateDashboardData();
+
+
+    } catch (error) {
+
+        console.error(
+            "Unable to delete agency:",
+            error
+        );
+
+        handleApiError(
+            error
+        );
     }
-
-
-    agencies.splice(index, 1);
-
-
-    saveAgencies();
-
-    renderAgencies();
-
-    populateAgencyDropdown();
-
 }
 
 
-/* ==========================================================
-   DELETE COORDINATOR
-========================================================== */
+/*
+==========================================================
+DELETE COORDINATOR
+==========================================================
+*/
 
-function deleteCoordinator(id) {
+async function deleteCoordinator(
+    id
+) {
 
     var index =
-        findCoordinatorIndex(id);
+        findCoordinatorIndex(
+            id
+        );
+
 
     if (index === -1) {
-
         return;
-
     }
 
 
@@ -1873,72 +3179,127 @@ function deleteCoordinator(id) {
 
 
     if (!confirmed) {
-
         return;
-
     }
 
 
-    coordinators.splice(index, 1);
+    try {
+
+        await deleteCoordinatorApi(
+            id
+        );
 
 
-    saveCoordinators();
+        alert(
+            "Coordinator deleted successfully."
+        );
 
-    renderCoordinators();
 
-    updateDashboardData();
+        await reloadManagementData();
 
+
+        refreshCalculatedStatuses();
+
+
+        renderAgencies();
+        renderCoordinators();
+        populateAgencyDropdown();
+        updateDashboardData();
+
+
+    } catch (error) {
+
+        console.error(
+            "Unable to delete coordinator:",
+            error
+        );
+
+        handleApiError(
+            error
+        );
+    }
 }
 
 
-/* ==========================================================
-   UPDATE DASHBOARD DATA
-========================================================== */
+/*
+==========================================================
+RELOAD MANAGEMENT DATA
+==========================================================
+*/
+
+async function reloadManagementData() {
+
+    await loadAgencies();
+    await loadRotations();
+    await loadCoordinators();
+
+    refreshCalculatedStatuses();
+}
+
+
+/*
+==========================================================
+UPDATE DASHBOARD DATA
+==========================================================
+*/
 
 function updateDashboardData() {
 
     /*
-       Dashboard will read the same coordinator
-       data directly from localStorage.
+    Do NOT use Local Storage as the dashboard's
+    primary data source.
 
-       We therefore save the latest coordinator
-       array under the dashboard-compatible key.
+    Backend remains the source of truth.
     */
 
+    try {
 
-    localStorage.setItem(
-        "obt_dashboard_trainings",
-        JSON.stringify(coordinators)
-    );
+        window.dispatchEvent(
+            new CustomEvent(
+                "dashboardDataChanged"
+            )
+        );
 
+    } catch (error) {
+
+        console.warn(
+            "Unable to notify dashboard:",
+            error
+        );
+    }
 }
 
 
-/* ==========================================================
-   ENTRY INFORMATION
-========================================================== */
+/*
+==========================================================
+AGENCY ENTRY INFORMATION
+==========================================================
+*/
 
-function updateAgencyEntryInfo(count) {
+function updateAgencyEntryInfo(
+    count
+) {
 
     var element =
         document.getElementById(
             "agencyEntryInfo"
         );
 
+
     if (!element) {
-
         return;
-
     }
 
 
-    if (count === 0) {
+    if (
+        count ===
+        0
+    ) {
 
         element.textContent =
             "Showing 0 to 0 of 0 entries";
 
         return;
-
     }
 
 
@@ -1948,35 +3309,39 @@ function updateAgencyEntryInfo(count) {
         " of " +
         count +
         " entries";
-
 }
 
 
-/* ==========================================================
-   COORDINATOR ENTRY INFORMATION
-========================================================== */
+/*
+==========================================================
+COORDINATOR ENTRY INFORMATION
+==========================================================
+*/
 
-function updateCoordinatorEntryInfo(count) {
+function updateCoordinatorEntryInfo(
+    count
+) {
 
     var element =
         document.getElementById(
             "coordinatorEntryInfo"
         );
 
+
     if (!element) {
-
         return;
-
     }
 
 
-    if (count === 0) {
+    if (
+        count ===
+        0
+    ) {
 
         element.textContent =
             "Showing 0 to 0 of 0 entries";
 
         return;
-
     }
 
 
@@ -1986,167 +3351,156 @@ function updateCoordinatorEntryInfo(count) {
         " of " +
         count +
         " entries";
-
 }
 
 
-/* ==========================================================
-   FIND AGENCY INDEX
-========================================================== */
+/*
+==========================================================
+FIND AGENCY INDEX
+==========================================================
+*/
 
-function findAgencyIndex(id) {
+function findAgencyIndex(
+    id
+) {
 
-    var i;
-
-
-    for (i = 0; i < agencies.length; i++) {
+    for (
+        var i = 0;
+        i < agencies.length;
+        i++
+    ) {
 
         if (
-            String(agencies[i].id) ===
-            String(id)
+            String(
+                agencies[i].id
+            ) ===
+            String(
+                id
+            )
         ) {
 
             return i;
-
         }
-
     }
 
 
     return -1;
-
 }
 
 
-/* ==========================================================
-   FIND COORDINATOR INDEX
-========================================================== */
+/*
+==========================================================
+FIND COORDINATOR INDEX
+==========================================================
+*/
 
-function findCoordinatorIndex(id) {
-
-    var i;
-
+function findCoordinatorIndex(
+    id
+) {
 
     for (
-        i = 0;
+        var i = 0;
         i < coordinators.length;
         i++
     ) {
 
         if (
-            String(coordinators[i].id) ===
-            String(id)
+            String(
+                coordinators[i].id
+            ) ===
+            String(
+                id
+            )
         ) {
 
             return i;
-
         }
-
     }
 
 
     return -1;
-
 }
 
 
-/* ==========================================================
-   GET AGENCY NAME BY ID
-========================================================== */
+/*
+==========================================================
+GET INPUT VALUE
+==========================================================
+*/
 
-function getAgencyNameById(id) {
+function getValue(
+    id
+) {
 
-    var index =
-        findAgencyIndex(id);
+    var element =
+        document.getElementById(
+            id
+        );
 
 
-    if (index === -1) {
-
+    if (!element) {
         return "";
-
     }
 
-
-    return agencies[index].name;
-
-}
-
-
-/* ==========================================================
-   GENERATE UNIQUE ID
-========================================================== */
-
-function generateId() {
 
     return (
-        Date.now().toString() +
-        Math.floor(
-            Math.random() * 1000
-        ).toString()
-    );
-
+        element.value ||
+        ""
+    )
+    .trim();
 }
 
 
-/* ==========================================================
-   GET INPUT VALUE
-========================================================== */
+/*
+==========================================================
+SET INPUT VALUE
+==========================================================
+*/
 
-function getValue(id) {
+function setValue(
+    id,
+    value
+) {
 
     var element =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
 
     if (!element) {
-
-        return "";
-
-    }
-
-
-    return element.value.trim();
-
-}
-
-
-/* ==========================================================
-   SET INPUT VALUE
-========================================================== */
-
-function setValue(id, value) {
-
-    var element =
-        document.getElementById(id);
-
-
-    if (!element) {
-
         return;
-
     }
 
 
     element.value =
-        value || "";
-
+        value ===
+        null ||
+        value ===
+        undefined
+            ? ""
+            : value;
 }
 
 
-/* ==========================================================
-   CLOSE BOOTSTRAP MODAL
-========================================================== */
+/*
+==========================================================
+CLOSE BOOTSTRAP MODAL
+==========================================================
+*/
 
-function closeModal(id) {
+function closeModal(
+    id
+) {
 
     var modalElement =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
 
     if (!modalElement) {
-
         return;
-
     }
 
 
@@ -2159,64 +3513,141 @@ function closeModal(id) {
     if (modal) {
 
         modal.hide();
-
     }
-
 }
 
 
-/* ==========================================================
-   HTML ESCAPE
-========================================================== */
+/*
+==========================================================
+HTML ESCAPE
+==========================================================
+*/
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+) {
 
-    if (value === null ||
-        value === undefined) {
+    if (
+        value ===
+        null ||
+        value ===
+        undefined
+    ) {
 
         return "";
-
     }
 
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return String(
+        value
+    )
 
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 }
 
 
-/* ==========================================================
-   ESCAPE VALUE FOR INLINE ATTRIBUTE
-========================================================== */
+/*
+==========================================================
+ESCAPE INLINE ATTRIBUTE
+==========================================================
+*/
 
-function escapeForAttribute(value) {
+function escapeForAttribute(
+    value
+) {
 
-    if (value === null ||
-        value === undefined) {
+    if (
+        value ===
+        null ||
+        value ===
+        undefined
+    ) {
 
         return "";
-
     }
 
 
-    return String(value)
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'");
+    return String(
+        value
+    )
 
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+
+    .replace(
+        /'/g,
+        "\\'"
+    );
 }
+
+
+/*
+==========================================================
+API ERROR HANDLER
+==========================================================
+*/
+
+function handleApiError(
+    error
+) {
+
+    var message =
+        error &&
+        error.message
+            ? error.message
+            : "An unexpected error occurred.";
+
+
+    console.error(
+        "API Error:",
+        message
+    );
+
+
+    alert(
+        message
+    );
+}
+
+
+/*
+==========================================================
+LOGOUT
+==========================================================
+*/
+
 function logoutUser() {
 
-localStorage.removeItem(
-    LOGGED_IN_USER_KEY
-);
+    localStorage.removeItem(
+        "obt_logged_in_user"
+    );
 
 
-
-window.location.href =
-    "../../index.html";
-
+    window.location.href =
+        "../../index.html";
 }

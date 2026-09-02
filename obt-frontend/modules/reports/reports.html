@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -36,6 +37,7 @@
 
 <body>
 
+
 <!-- ======================================================
      TOP HEADER
 ======================================================= -->
@@ -46,20 +48,17 @@
 
         <div class="header-content">
 
-
             <div class="brand-section">
 
                 <img src="../../assets/images/logo/logo.png"
                      alt="NTPC Logo"
                      class="logo">
 
-
                 <div class="brand-text">
 
                     <h1 class="system-title">
                         OBT Agency Management System
                     </h1>
-
 
                     <p class="system-subtitle">
                         Outbond Trainning Program Agency Management System
@@ -79,7 +78,6 @@
                           id="loggedInUserName">
                         Administrator
                     </span>
-
 
                     <i class="fas fa-chevron-down user-dropdown-icon"></i>
 
@@ -188,9 +186,7 @@
                     Home
                 </span>
 
-
                 <i class="fas fa-chevron-right breadcrumb-arrow"></i>
-
 
                 <span class="breadcrumb-current">
                     Reports
@@ -218,7 +214,6 @@
                             Agency &amp; Coordinator Report
                         </h3>
 
-
                         <p class="report-description">
                             Select a time period to view the
                             agencies and coordinators active
@@ -237,7 +232,7 @@
 
                         <!-- FROM DATE -->
 
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-3 col-md-6">
 
                             <label for="reportFromDate"
                                    class="form-label">
@@ -245,7 +240,6 @@
                                 From Date
 
                             </label>
-
 
                             <input type="date"
                                    id="reportFromDate"
@@ -257,7 +251,7 @@
 
                         <!-- TO DATE -->
 
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-3 col-md-6">
 
                             <label for="reportToDate"
                                    class="form-label">
@@ -265,7 +259,6 @@
                                 To Date
 
                             </label>
-
 
                             <input type="date"
                                    id="reportToDate"
@@ -275,9 +268,37 @@
 
 
 
+                        <!-- PRINT ORIENTATION -->
+
+                        <div class="col-lg-3 col-md-6">
+
+                            <label for="printOrientation"
+                                   class="form-label">
+
+                                Print Orientation
+
+                            </label>
+
+                            <select id="printOrientation"
+                                    class="form-select">
+
+                                <option value="landscape">
+                                    Landscape
+                                </option>
+
+                                <option value="portrait">
+                                    Portrait
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
                         <!-- ACTIONS -->
 
-                        <div class="col-lg-4 col-md-12">
+                        <div class="col-lg-3 col-md-6">
 
                             <div class="report-action-buttons">
 
@@ -291,16 +312,6 @@
 
                                 </button>
 
-
-                                <button type="button"
-                                        id="clearReportBtn"
-                                        class="btn btn-secondary">
-
-                                    <i class="fas fa-rotate-left me-2"></i>
-
-                                    Clear
-
-                                </button>
 
                             </div>
 
@@ -347,7 +358,14 @@
                     </div>
 
 
+                    <!-- ==================================================
+                         REPORT ACTIONS
+                    =================================================== -->
+
                     <div class="report-result-actions">
+
+
+                        <!-- PRINT -->
 
                         <button type="button"
                                 id="printReportBtn"
@@ -356,6 +374,19 @@
                             <i class="fas fa-print me-2"></i>
 
                             Print
+
+                        </button>
+
+
+                        <!-- CSV -->
+
+                        <button type="button"
+                                id="exportCsvBtn"
+                                class="btn btn-outline-success">
+
+                            <i class="fas fa-file-csv me-2"></i>
+
+                            Export CSV
 
                         </button>
 
@@ -378,7 +409,7 @@
                             <tr>
 
                                 <th>
-                                    #
+                                    Sr. No.
                                 </th>
 
                                 <th>
@@ -394,11 +425,15 @@
                                 </th>
 
                                 <th>
-                                    Coordinator Designation
+                                    Designation
                                 </th>
 
                                 <th>
-                                    Date
+                                    Start Date
+                                </th>
+
+                                <th>
+                                    End Date
                                 </th>
 
                                 <th>
@@ -418,7 +453,7 @@
 
                             <tr>
 
-                                <td colspan="8"
+                                <td colspan="9"
                                     class="text-center py-4">
 
                                     Select a date range and
@@ -490,12 +525,23 @@
 <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 
+
+<!-- ======================================================
+     API JAVASCRIPT
+======================================================= -->
+
+<script src="../../assets/js/api/api.js"></script>
+
+
+
 <!-- ======================================================
      REPORTS JAVASCRIPT
 ======================================================= -->
 
 <script src="../../assets/js/reports.js"></script>
 
+
 </body>
 
 </html>
+

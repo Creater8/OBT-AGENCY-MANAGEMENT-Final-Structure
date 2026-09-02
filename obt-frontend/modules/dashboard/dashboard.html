@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
 
 <head>
-
 
 <meta charset="UTF-8">
 
@@ -30,538 +30,620 @@
 <link rel="stylesheet"
       href="../../assets/css/dashboard.css">
 
-
 </head>
 
 <body>
 
+<!-- ======================================================
+     TOP HEADER
+======================================================= -->
+
 <header class="top-header">
 
+    <div class="container-fluid">
 
-<div class="container-fluid">
+        <div class="header-content">
 
-    <div class="header-content">
+            <div class="brand-section">
 
-        <div class="brand-section">
+                <img src="../../assets/images/logo/logo.png"
+                     alt="NTPC Logo"
+                     class="logo">
 
-            <img src="../../assets/images/logo/logo.png"
-                 alt="NTPC Logo"
-                 class="logo">
+                <div class="brand-text">
 
-            <div class="brand-text">
+                    <h1 class="system-title">
+                        OBT Agency Management System
+                    </h1>
 
-                <h1 class="system-title">
-                    OBT Agency Management System
-                </h1>
+                    <p class="system-subtitle">
+                        Outbond Trainning Program Agency Management System
+                    </p>
 
-                <p class="system-subtitle">
-                    Outbond Trainning Program Agency Management System
-                </p>
+                </div>
 
             </div>
 
-        </div>
 
+            <div class="header-user-section">
 
-        <div class="header-user-section">
+                <div class="user-profile"
+                     id="userProfile">
 
-            <div class="user-profile"
-                 id="userProfile">
+                    <span class="user-name"
+                          id="loggedInUserName">
+                    </span>
 
-                <span class="user-name"
-                      id="loggedInUserName">
-                </span>
+                    <i class="fas fa-chevron-down user-dropdown-icon"></i>
 
-                <i class="fas fa-chevron-down user-dropdown-icon"></i>
+                </div>
 
             </div>
 
         </div>
 
     </div>
-
-</div>
-
 
 </header>
 
+
+<!-- ======================================================
+     NAVIGATION
+======================================================= -->
+
 <nav class="main-navigation">
 
+    <div class="container-fluid">
 
-<div class="container-fluid">
+        <div class="navigation-content">
 
-    <div class="navigation-content">
+            <a href="dashboard.html"
+               class="nav-item active">
 
-        <a href="dashboard.html"
-           class="nav-item active">
+                <i class="fas fa-chart-line"></i>
 
-            <i class="fas fa-chart-line"></i>
+                <span>
+                    Dashboard
+                </span>
 
-            <span>
-                Dashboard
-            </span>
-
-        </a>
-
-
-        <a href="../agencies-coordinators/agencies-coordinators.html"
-           class="nav-item">
-
-            <i class="fas fa-users"></i>
-
-            <span>
-                Agencies &amp; Coordinators
-            </span>
-
-        </a>
+            </a>
 
 
-        <a href="../reports/reports.html"
-           class="nav-item">
+            <a href="../agencies-coordinators/agencies-coordinators.html"
+               class="nav-item">
 
-            <i class="fas fa-file-lines"></i>
+                <i class="fas fa-users"></i>
 
-            <span>
-                Reports
-            </span>
+                <span>
+                    Agencies &amp; Coordinators
+                </span>
 
-        </a>
+            </a>
 
 
-        <a href="#"
-           class="nav-item"
-           id="logoutBtn">
+            <a href="../reports/reports.html"
+               class="nav-item">
 
-            <i class="fas fa-right-from-bracket"></i>
+                <i class="fas fa-file-lines"></i>
 
-            <span>
-                Logout
-            </span>
+                <span>
+                    Reports
+                </span>
 
-        </a>
+            </a>
+
+
+            <a href="#"
+               class="nav-item"
+               id="logoutBtn">
+
+                <i class="fas fa-right-from-bracket"></i>
+
+                <span>
+                    Logout
+                </span>
+
+            </a>
+
+        </div>
 
     </div>
-
-</div>
-
 
 </nav>
 
+
+<!-- ======================================================
+     MAIN CONTENT
+======================================================= -->
+
 <main class="main-content">
 
+    <div class="container-fluid">
 
-<div class="container-fluid">
 
+        <!-- ==================================================
+             PAGE HEADER
+        =================================================== -->
 
-    <div class="page-header">
+        <div class="page-header">
 
-        <h2 class="page-title">
-            Dashboard
-        </h2>
-
-        <div class="breadcrumb-area">
-
-            <span class="breadcrumb-home">
-                Home
-            </span>
-
-            <i class="fas fa-chevron-right breadcrumb-arrow"></i>
-
-            <span class="breadcrumb-current">
+            <h2 class="page-title">
                 Dashboard
-            </span>
+            </h2>
+
+            <div class="breadcrumb-area">
+
+                <span class="breadcrumb-home">
+                    Home
+                </span>
+
+                <i class="fas fa-chevron-right breadcrumb-arrow"></i>
+
+                <span class="breadcrumb-current">
+                    Dashboard
+                </span>
+
+            </div>
 
         </div>
 
-    </div>
 
+        <!-- ==================================================
+             DASHBOARD STATISTICS
+        =================================================== -->
 
+        <section class="dashboard-statistics">
 
-    <section class="dashboard-statistics">
+            <div class="row g-4">
 
-        <div class="row g-4">
 
+                <!-- TOTAL AGENCIES -->
 
-            <div class="col-xl-3 col-lg-6 col-md-6">
+                <div class="col-xl-3 col-lg-6 col-md-6">
 
-                <div class="stat-card stat-card-blue">
+                    <div class="stat-card stat-card-blue">
 
-                    <div class="stat-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-
-                    <div class="stat-content">
-
-                        <div class="stat-title">
-                            Total Agencies
-                        </div>
-
-                        <div class="stat-value"
-                             id="totalAgencies">
-                            0
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-xl-3 col-lg-6 col-md-6">
-
-                <div class="stat-card stat-card-green">
-
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-
-                    <div class="stat-content">
-
-                        <div class="stat-title">
-                            Total Coordinators
-                        </div>
-
-                        <div class="stat-value"
-                             id="totalCoordinators">
-                            0
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-xl-3 col-lg-6 col-md-6">
-
-                <div class="stat-card stat-card-purple">
-
-                    <div class="stat-icon">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-
-                    <div class="stat-content">
-
-                        <div class="stat-title">
-                            Active Coordinators
-                        </div>
-
-                        <div class="stat-value"
-                             id="activeTrainings">
-                            0
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="col-xl-3 col-lg-6 col-md-6">
-
-                <div class="stat-card stat-card-orange">
-
-                    <div class="stat-icon">
-                        <i class="fas fa-user-slash"></i>
-                    </div>
-
-                    <div class="stat-content">
-
-                        <div class="stat-title">
-                            Inactive Coordinators
-                        </div>
-
-                        <div class="stat-value"
-                             id="upcomingTrainings">
-                            0
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-    </section>
-
-
-
-    <section class="recent-training-section">
-
-        <div class="recent-training-card">
-
-
-            <h3 class="section-title">
-                Recent Outbond Training
-            </h3>
-
-
-            <div class="training-selector">
-
-                <label for="trainingSelect"
-                       class="training-label">
-
-                    Select Training
-
-                </label>
-
-                <select id="trainingSelect"
-                        class="form-select training-select">
-
-                    <option value="">
-                        Select a training program
-                    </option>
-
-                </select>
-
-            </div>
-
-
-
-            <div class="training-details">
-
-
-                <div class="training-details-column">
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Coordinator
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value"
-                             id="trainingCoordinator">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-layer-group"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Batch Name
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value"
-                             id="trainingBatchName">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-calendar-days"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Date
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value"
-                             id="trainingDate">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-id-badge"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Designation
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value"
-                             id="trainingDesignation">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-
-                <div class="training-details-column">
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
+                        <div class="stat-icon">
                             <i class="fas fa-building"></i>
                         </div>
 
-                        <div class="detail-label">
-                            Agency
-                        </div>
+                        <div class="stat-content">
 
-                        <div class="detail-separator">
-                            :
-                        </div>
+                            <div class="stat-title">
+                                Total Agencies
+                            </div>
 
-                        <div class="detail-value"
-                             id="trainingAgency">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Phone
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value"
-                             id="trainingPhone">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Email
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value"
-                             id="trainingEmail">
-                            &nbsp;
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="detail-row">
-
-                        <div class="detail-icon">
-                            <i class="fas fa-circle-check"></i>
-                        </div>
-
-                        <div class="detail-label">
-                            Status
-                        </div>
-
-                        <div class="detail-separator">
-                            :
-                        </div>
-
-                        <div class="detail-value">
-
-                            <span class="status-badge"
-                                  id="trainingStatus">
-                            </span>
+                            <div class="stat-value"
+                                 id="totalAgencies">
+                                0
+                            </div>
 
                         </div>
 
                     </div>
 
+                </div>
+
+
+                <!-- TOTAL COORDINATORS -->
+
+                <div class="col-xl-3 col-lg-6 col-md-6">
+
+                    <div class="stat-card stat-card-green">
+
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+
+                        <div class="stat-content">
+
+                            <div class="stat-title">
+                                Total Coordinators
+                            </div>
+
+                            <div class="stat-value"
+                                 id="totalCoordinators">
+                                0
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVE COORDINATORS -->
+
+                <div class="col-xl-3 col-lg-6 col-md-6">
+
+                    <div class="stat-card stat-card-purple">
+
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+
+                        <div class="stat-content">
+
+                            <div class="stat-title">
+                                Active Coordinators
+                            </div>
+
+                            <div class="stat-value"
+                                 id="activeTrainings">
+                                0
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- INACTIVE COORDINATORS -->
+
+                <div class="col-xl-3 col-lg-6 col-md-6">
+
+                    <div class="stat-card stat-card-orange">
+
+                        <div class="stat-icon">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+
+                        <div class="stat-content">
+
+                            <div class="stat-title">
+                                Inactive Coordinators
+                            </div>
+
+                            <div class="stat-value"
+                                 id="upcomingTrainings">
+                                0
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
 
             </div>
 
-        </div>
-
-    </section>
+        </section>
 
 
-</div>
-```
+        <!-- ==================================================
+             RECENT OUTBOUND TRAINING
+        =================================================== -->
+
+        <section class="recent-training-section">
+
+            <div class="recent-training-card">
+
+
+                <h3 class="section-title">
+                    Recent Outbond Training
+                </h3>
+
+
+                <!-- ==================================================
+                     AGENCY SELECTOR
+                =================================================== -->
+
+                <div class="training-selector">
+
+                    <label for="trainingSelect"
+                           class="training-label">
+
+                        Select Agency
+
+                    </label>
+
+
+                    <select id="trainingSelect"
+                            class="form-select training-select">
+
+                        <option value="">
+                            Select an agency
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ==================================================
+                     TRAINING DETAILS
+                =================================================== -->
+
+                <div class="training-details">
+
+
+                    <!-- ==================================================
+                         LEFT COLUMN
+                    =================================================== -->
+
+                    <div class="training-details-column">
+
+
+                        <!-- COORDINATOR -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Coordinator
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingCoordinator">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- BATCH NAME -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Batch Name
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingBatchName">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- START DATE -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-days"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Start Date
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingStartDate">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- END DATE -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                End Date
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingEndDate">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- DESIGNATION -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-id-badge"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Designation
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingDesignation">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- ==================================================
+                         RIGHT COLUMN
+                    =================================================== -->
+
+                    <div class="training-details-column">
+
+
+                        <!-- AGENCY -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Agency
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingAgency">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- PHONE -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Phone
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingPhone">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Email
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value"
+                                 id="trainingEmail">
+                                &nbsp;
+                            </div>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="detail-row">
+
+                            <div class="detail-icon">
+                                <i class="fas fa-circle-check"></i>
+                            </div>
+
+                            <div class="detail-label">
+                                Status
+                            </div>
+
+                            <div class="detail-separator">
+                                :
+                            </div>
+
+                            <div class="detail-value">
+
+                                <span class="status-badge"
+                                      id="trainingStatus">
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
 
 </main>
 
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
 <footer class="footer">
 
+    <div class="container">
 
-<div class="container">
+        <p class="mb-0">
 
-    <p class="mb-0">
+            © 2026 NTPC Limited |
+            OBT Agency Management System |
+            All Rights Reserved.
 
-        © 2026 NTPC Limited |
-        OBT Agency Management System |
-        All Rights Reserved.
+        </p>
 
-    </p>
-
-</div>
-
+    </div>
 
 </footer>
 
+
+<!-- ======================================================
+     JAVASCRIPT
+======================================================= -->
+
 <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script src="../../assets/js/api/api.js"></script>
 
 <script src="../../assets/js/dashboard.js"></script>
 
 </body>
 
 </html>
+
