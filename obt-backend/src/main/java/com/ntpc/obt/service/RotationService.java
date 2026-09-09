@@ -22,7 +22,9 @@ import java.util.Optional;
 public class RotationService {
 
     private final RotationRepository rotationRepository;
+
     private final AgencyRepository agencyRepository;
+
     private final CoordinatorRepository coordinatorRepository;
 
     public RotationService(
@@ -30,35 +32,51 @@ public class RotationService {
             AgencyRepository agencyRepository,
             CoordinatorRepository coordinatorRepository
     ) {
+
         this.rotationRepository = rotationRepository;
         this.agencyRepository = agencyRepository;
         this.coordinatorRepository = coordinatorRepository;
     }
+
 
     /*
      * ======================================================
      * GET ALL ROTATIONS
      * ======================================================
      *
-     * Always return rotations according to their backend
-     * rotation order.
+     * Before returning rotations, automatically process
+     * any completed agency rollover.
+     *
+     * This is important because the dashboard calls:
+     *
+     * GET /api/rotations
+     *
+     * to obtain the rotation order.
+     *
+     * Therefore the dashboard must receive the already
+     * updated database order.
      */
-    @Transactional(readOnly = true)
+
     public List<Rotation> getAllRotations() {
+
+        performAutomaticRotationRollover();
 
         return rotationRepository
                 .findAllByOrderByRotationOrderAsc();
     }
+
 
     /*
      * ======================================================
      * GET ROTATION BY ID
      * ======================================================
      */
+
     @Transactional(readOnly = true)
     public Rotation getRotationById(Long id) {
 
         if (id == null) {
+
             throw new IllegalArgumentException(
                     "Rotation ID cannot be null."
             );
@@ -73,15 +91,18 @@ public class RotationService {
                 );
     }
 
+
     /*
      * ======================================================
      * GET ROTATION BY AGENCY ID
      * ======================================================
      */
+
     @Transactional(readOnly = true)
     public Rotation getRotationByAgencyId(Long agencyId) {
 
         if (agencyId == null) {
+
             throw new IllegalArgumentException(
                     "Agency ID cannot be null."
             );
@@ -97,17 +118,20 @@ public class RotationService {
                 );
     }
 
+
     /*
      * ======================================================
      * GET ROTATION BY ORDER
      * ======================================================
      */
+
     @Transactional(readOnly = true)
     public Rotation getRotationByOrder(
             Integer rotationOrder
     ) {
 
         if (rotationOrder == null) {
+
             throw new IllegalArgumentException(
                     "Rotation order cannot be null."
             );
@@ -123,25 +147,28 @@ public class RotationService {
                 );
     }
 
+
     /*
      * ======================================================
      * CREATE ROTATION
      * ======================================================
      *
-     * If rotationOrder is supplied:
-     *      use the supplied order.
+     * rotationOrder is optional.
      *
      * If rotationOrder is null:
-     *      automatically assign the next available order.
      *
-     * There is NO 1-5 restriction.
+     *     automatically assign the next available order.
+     *
+     * There is NO fixed maximum.
      */
+
     public Rotation createRotation(
             Long agencyId,
             Integer rotationOrder
     ) {
 
         if (agencyId == null) {
+
             throw new IllegalArgumentException(
                     "Agency ID cannot be null."
             );
@@ -157,9 +184,11 @@ public class RotationService {
                                 )
                         );
 
+
         /*
          * One Agency can have only one Rotation.
          */
+
         if (
                 rotationRepository
                         .findByAgencyId(agencyId)
@@ -171,21 +200,22 @@ public class RotationService {
             );
         }
 
+
         /*
-         * Backend automatically determines the order
-         * when one is not supplied.
+         * Automatically determine next order.
          */
+
         if (rotationOrder == null) {
 
             rotationOrder =
                     getNextAutomaticRotationOrder();
         }
 
+
         /*
-         * Rotation order must be a positive whole number.
-         *
-         * There is NO maximum.
+         * Rotation order must be positive.
          */
+
         if (rotationOrder <= 0) {
 
             throw new IllegalArgumentException(
@@ -193,9 +223,11 @@ public class RotationService {
             );
         }
 
+
         /*
          * Rotation order must be unique.
          */
+
         if (
                 rotationRepository
                         .findByRotationOrder(rotationOrder)
@@ -209,6 +241,7 @@ public class RotationService {
             );
         }
 
+
         Rotation rotation =
                 new Rotation(
                         agency,
@@ -218,11 +251,13 @@ public class RotationService {
         return rotationRepository.save(rotation);
     }
 
+
     /*
      * ======================================================
      * UPDATE ROTATION
      * ======================================================
      */
+
     public Rotation updateRotation(
             Long id,
             Long agencyId,
@@ -230,28 +265,33 @@ public class RotationService {
     ) {
 
         if (id == null) {
+
             throw new IllegalArgumentException(
                     "Rotation ID cannot be null."
             );
         }
 
         if (agencyId == null) {
+
             throw new IllegalArgumentException(
                     "Agency ID cannot be null."
             );
         }
 
         if (rotationOrder == null) {
+
             throw new IllegalArgumentException(
                     "Rotation order cannot be null."
             );
         }
 
         if (rotationOrder <= 0) {
+
             throw new IllegalArgumentException(
                     "Rotation order must be a positive whole number."
             );
         }
+
 
         Rotation rotation =
                 rotationRepository
@@ -263,6 +303,7 @@ public class RotationService {
                                 )
                         );
 
+
         Agency agency =
                 agencyRepository
                         .findById(agencyId)
@@ -273,13 +314,15 @@ public class RotationService {
                                 )
                         );
 
+
         /*
-         * If another Rotation already owns this order,
-         * do not allow duplicate rotation orders.
+         * Prevent duplicate rotation orders.
          */
+
         Optional<Rotation> existing =
                 rotationRepository
                         .findByRotationOrder(rotationOrder);
+
 
         if (
                 existing.isPresent()
@@ -296,24 +339,30 @@ public class RotationService {
             );
         }
 
+
         rotation.setAgency(agency);
+
         rotation.setRotationOrder(rotationOrder);
 
         return rotationRepository.save(rotation);
     }
+
 
     /*
      * ======================================================
      * DELETE ROTATION
      * ======================================================
      */
+
     public void deleteRotation(Long id) {
 
         if (id == null) {
+
             throw new IllegalArgumentException(
                     "Rotation ID cannot be null."
             );
         }
+
 
         Rotation rotation =
                 rotationRepository
@@ -325,44 +374,64 @@ public class RotationService {
                                 )
                         );
 
+
         rotationRepository.delete(rotation);
     }
+
 
     /*
      * ======================================================
      * GET CURRENT ROTATION AGENCY
      * ======================================================
      *
-     * THIS IS THE MAIN ROTATION LOGIC.
+     * MAIN ROTATION LOGIC.
      *
-     * The Coordinator's:
+     * IMPORTANT:
      *
-     *      startDate
-     *      endDate
+     * Automatic rollover happens BEFORE determining the
+     * current active agency.
      *
-     * determine the actual active period.
+     * This ensures that when an agency completes, its
+     * rotation position is immediately updated.
      *
-     * The Agency itself does NOT contain dates.
+     * Example:
      *
-     * Logic:
+     * BEFORE:
      *
-     * 1. Find an agency whose coordinator is currently active.
+     * A = 1
+     * B = 2
+     * C = 3
+     * D = 4
      *
-     * 2. If no agency is currently active,
-     *    find the next future agency.
+     * D completes.
      *
-     * 3. If there is no future agency,
-     *    restart from the lowest rotation order.
+     * AFTER:
+     *
+     * D = 1
+     * A = 2
+     * B = 3
+     * C = 4
+     *
+     * Even if C is now active, D remains at position 1.
      */
-    @Transactional(readOnly = true)
+
     public Agency getCurrentRotationAgency() {
+
+        /*
+         * First perform automatic rollover.
+         */
+
+        performAutomaticRotationRollover();
+
 
         LocalDate today =
                 LocalDate.now();
 
+
         List<Rotation> rotations =
                 rotationRepository
                         .findAllByOrderByRotationOrderAsc();
+
 
         if (
                 rotations == null
@@ -375,78 +444,98 @@ public class RotationService {
             );
         }
 
+
         /*
          * ==================================================
          * STEP 1
          * FIND CURRENTLY ACTIVE AGENCY
          * ==================================================
          *
-         * Current means:
+         * Current:
          *
          * startDate <= today <= endDate
          */
+
         List<Rotation> currentRotations =
                 new ArrayList<>();
+
 
         for (Rotation rotation : rotations) {
 
             if (rotation == null) {
+
                 continue;
             }
+
 
             Agency agency =
                     rotation.getAgency();
 
+
             if (agency == null) {
+
                 continue;
             }
+
 
             Long agencyId =
                     agency.getId();
 
+
             if (agencyId == null) {
+
                 continue;
             }
+
 
             Optional<Coordinator> coordinatorOptional =
                     coordinatorRepository
                             .findByAgencyId(agencyId);
 
+
             if (coordinatorOptional.isEmpty()) {
+
                 continue;
             }
+
 
             Coordinator coordinator =
                     coordinatorOptional.get();
 
+
             LocalDate startDate =
                     coordinator.getStartDate();
 
+
             LocalDate endDate =
                     coordinator.getEndDate();
+
 
             if (
                     startDate == null
                             ||
                     endDate == null
             ) {
+
                 continue;
             }
+
 
             /*
              * Ignore invalid date ranges.
              */
+
             if (endDate.isBefore(startDate)) {
+
                 continue;
             }
 
-            /*
-             * Agency is currently active.
-             */
+
             boolean active =
                     !today.isBefore(startDate)
                             &&
                     !today.isAfter(endDate);
+
 
             if (active) {
 
@@ -454,93 +543,118 @@ public class RotationService {
             }
         }
 
+
         /*
-         * If multiple records somehow qualify,
-         * backend rotation order remains the authority.
+         * If an agency is currently active, it becomes
+         * the current agency.
+         *
+         * Rotation order is used only to resolve an
+         * unexpected overlap.
          */
+
         if (!currentRotations.isEmpty()) {
 
             currentRotations.sort(
                     Comparator.comparing(
-                            Rotation::getRotationOrder
+                            Rotation::getRotationOrder,
+                            Comparator.nullsLast(
+                                    Comparator.naturalOrder()
+                            )
                     )
             );
+
 
             return currentRotations
                     .get(0)
                     .getAgency();
         }
 
+
         /*
          * ==================================================
          * STEP 2
-         * FIND NEXT FUTURE AGENCY
+         * FIND FUTURE AGENCY
          * ==================================================
          *
-         * Future means:
-         *
-         * startDate > today
-         *
-         * The nearest upcoming start date wins.
-         *
-         * If two agencies have the same start date,
-         * rotationOrder decides.
+         * If no agency is currently active, find the
+         * nearest future agency.
          */
+
         List<RotationWithDate> futureRotations =
                 new ArrayList<>();
+
 
         for (Rotation rotation : rotations) {
 
             if (rotation == null) {
+
                 continue;
             }
+
 
             Agency agency =
                     rotation.getAgency();
 
+
             if (agency == null) {
+
                 continue;
             }
+
 
             Long agencyId =
                     agency.getId();
 
+
             if (agencyId == null) {
+
                 continue;
             }
+
 
             Optional<Coordinator> coordinatorOptional =
                     coordinatorRepository
                             .findByAgencyId(agencyId);
 
+
             if (coordinatorOptional.isEmpty()) {
+
                 continue;
             }
+
 
             Coordinator coordinator =
                     coordinatorOptional.get();
 
+
             LocalDate startDate =
                     coordinator.getStartDate();
 
+
             LocalDate endDate =
                     coordinator.getEndDate();
+
 
             if (
                     startDate == null
                             ||
                     endDate == null
             ) {
+
                 continue;
             }
 
+
             if (endDate.isBefore(startDate)) {
+
                 continue;
             }
+
 
             /*
              * Future agency.
              */
+
             if (startDate.isAfter(today)) {
 
                 futureRotations.add(
@@ -552,11 +666,14 @@ public class RotationService {
             }
         }
 
+
         /*
-         * Select nearest future start date.
+         * Nearest future agency wins.
          *
-         * If dates are equal, lower rotation order wins.
+         * Same start date:
+         * lower rotation order wins.
          */
+
         if (!futureRotations.isEmpty()) {
 
             futureRotations.sort(
@@ -571,71 +688,578 @@ public class RotationService {
                             )
             );
 
+
             return futureRotations
                     .get(0)
                     .getRotation()
                     .getAgency();
         }
 
+
         /*
          * ==================================================
          * STEP 3
-         * ROTATION ROLLOVER
+         * FALLBACK TO ROTATION ORDER 1
          * ==================================================
-         *
-         * No currently active agency.
-         *
-         * No future agency.
-         *
-         * Therefore every configured coordinator period
-         * has already ended.
-         *
-         * Start the cycle again from the FIRST agency
-         * according to backend rotation order.
          */
+
         rotations.sort(
                 Comparator.comparing(
-                        Rotation::getRotationOrder
+                        Rotation::getRotationOrder,
+                        Comparator.nullsLast(
+                                Comparator.naturalOrder()
+                        )
                 )
         );
+
 
         for (Rotation rotation : rotations) {
 
             if (rotation == null) {
+
                 continue;
             }
 
+
             if (rotation.getAgency() == null) {
+
                 continue;
             }
+
+
+            if (
+                    rotation.getRotationOrder() != null
+                            &&
+                    rotation.getRotationOrder() == 1
+            ) {
+
+                return rotation.getAgency();
+            }
+        }
+
+
+        /*
+         * Final fallback.
+         */
+
+        for (Rotation rotation : rotations) {
+
+            if (rotation == null) {
+
+                continue;
+            }
+
+
+            if (rotation.getAgency() == null) {
+
+                continue;
+            }
+
 
             return rotation.getAgency();
         }
+
 
         throw new IllegalArgumentException(
                 "No valid agency is available for rotation."
         );
     }
 
+
+    /*
+     * ======================================================
+     * AUTOMATIC ROTATION ROLLOVER
+     * ======================================================
+     *
+     * This is the important correction.
+     *
+     * A completed agency means:
+     *
+     *      endDate < today
+     *
+     * The agency with the latest completed end date is
+     * treated as the agency that most recently completed.
+     *
+     * Once found:
+     *
+     *      completed agency -> position 1
+     *
+     * Every agency currently before it moves one position
+     * forward.
+     *
+     * Example:
+     *
+     * A = 1
+     * B = 2
+     * C = 3
+     * D = 4
+     *
+     * D completes:
+     *
+     * D = 1
+     * A = 2
+     * B = 3
+     * C = 4
+     *
+     * The result is persisted to the database.
+     */
+
+    private void performAutomaticRotationRollover() {
+
+        LocalDate today =
+                LocalDate.now();
+
+
+        List<Rotation> rotations =
+                rotationRepository
+                        .findAllByOrderByRotationOrderAsc();
+
+
+        if (
+                rotations == null
+                        ||
+                rotations.isEmpty()
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * ==================================================
+         * FIND MOST RECENTLY COMPLETED AGENCY
+         * ==================================================
+         */
+
+        Rotation mostRecentlyCompleted =
+                null;
+
+
+        LocalDate latestEndDate =
+                null;
+
+
+        for (Rotation rotation : rotations) {
+
+            if (rotation == null) {
+
+                continue;
+            }
+
+
+            Agency agency =
+                    rotation.getAgency();
+
+
+            if (agency == null) {
+
+                continue;
+            }
+
+
+            Long agencyId =
+                    agency.getId();
+
+
+            if (agencyId == null) {
+
+                continue;
+            }
+
+
+            Optional<Coordinator> coordinatorOptional =
+                    coordinatorRepository
+                            .findByAgencyId(agencyId);
+
+
+            if (coordinatorOptional.isEmpty()) {
+
+                continue;
+            }
+
+
+            Coordinator coordinator =
+                    coordinatorOptional.get();
+
+
+            LocalDate startDate =
+                    coordinator.getStartDate();
+
+
+            LocalDate endDate =
+                    coordinator.getEndDate();
+
+
+            if (
+                    startDate == null
+                            ||
+                    endDate == null
+            ) {
+
+                continue;
+            }
+
+
+            /*
+             * Ignore invalid date ranges.
+             */
+
+            if (endDate.isBefore(startDate)) {
+
+                continue;
+            }
+
+
+            /*
+             * Completed agency.
+             */
+
+            if (endDate.isBefore(today)) {
+
+                if (
+                        latestEndDate == null
+                                ||
+                        endDate.isAfter(latestEndDate)
+                ) {
+
+                    latestEndDate =
+                            endDate;
+
+                    mostRecentlyCompleted =
+                            rotation;
+                }
+            }
+        }
+
+
+        /*
+         * Nothing completed.
+         */
+
+        if (mostRecentlyCompleted == null) {
+
+            return;
+        }
+
+
+        /*
+         * ==================================================
+         * CHECK WHETHER ROLLOVER IS ALREADY DONE
+         * ==================================================
+         *
+         * If the completed agency is already at position 1,
+         * do nothing.
+         */
+
+        if (
+                mostRecentlyCompleted.getRotationOrder() != null
+                        &&
+                mostRecentlyCompleted
+                        .getRotationOrder() == 1
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * ==================================================
+         * PERFORM REORDER
+         * ==================================================
+         */
+
+        reorderCompletedAgencyToFirst(
+                rotations,
+                mostRecentlyCompleted
+        );
+    }
+
+
+    /*
+     * ======================================================
+     * REORDER COMPLETED AGENCY TO FIRST POSITION
+     * ======================================================
+     *
+     * Example:
+     *
+     * BEFORE:
+     *
+     * A = 1
+     * B = 2
+     * C = 3
+     * D = 4
+     *
+     * Completed = D
+     *
+     * AFTER:
+     *
+     * D = 1
+     * A = 2
+     * B = 3
+     * C = 4
+     */
+
+    private void reorderCompletedAgencyToFirst(
+            List<Rotation> rotations,
+            Rotation completedRotation
+    ) {
+
+        if (
+                rotations == null
+                        ||
+                rotations.isEmpty()
+                        ||
+                completedRotation == null
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * Sort according to existing order.
+         */
+
+        rotations.sort(
+                Comparator.comparing(
+                        Rotation::getRotationOrder,
+                        Comparator.nullsLast(
+                                Comparator.naturalOrder()
+                        )
+                )
+        );
+
+
+        /*
+         * Find completed agency position.
+         */
+
+        int completedIndex =
+                rotations.indexOf(
+                        completedRotation
+                );
+
+
+        if (completedIndex < 0) {
+
+            return;
+        }
+
+
+        /*
+         * Already first.
+         */
+
+        if (completedIndex == 0) {
+
+            return;
+        }
+
+
+        /*
+         * ==================================================
+         * CREATE NEW ORDER
+         * ==================================================
+         */
+
+        List<Rotation> reordered =
+                new ArrayList<>();
+
+
+        /*
+         * Completed agency becomes first.
+         */
+
+        reordered.add(
+                completedRotation
+        );
+
+
+        /*
+         * All other agencies follow in their existing
+         * relative order.
+         */
+
+        for (Rotation rotation : rotations) {
+
+            if (rotation == null) {
+
+                continue;
+            }
+
+
+            if (rotation == completedRotation) {
+
+                continue;
+            }
+
+
+            reordered.add(rotation);
+        }
+
+
+        /*
+         * ==================================================
+         * DETERMINE SAFE TEMPORARY ORDER
+         * ==================================================
+         *
+         * Because rotationOrder may be UNIQUE in the
+         * database, we cannot directly perform:
+         *
+         * D = 4 -> 1
+         * A = 1 -> 2
+         *
+         * without temporarily creating duplicate values.
+         */
+
+        int highestOrder =
+                0;
+
+
+        for (Rotation rotation : reordered) {
+
+            if (rotation == null) {
+
+                continue;
+            }
+
+
+            Integer currentOrder =
+                    rotation.getRotationOrder();
+
+
+            if (
+                    currentOrder != null
+                            &&
+                    currentOrder > highestOrder
+            ) {
+
+                highestOrder =
+                        currentOrder;
+            }
+        }
+
+
+        long temporaryBase =
+                (long) highestOrder
+                        +
+                reordered.size()
+                        +
+                1000L;
+
+
+        if (
+                temporaryBase
+                        +
+                        reordered.size()
+                        >=
+                        Integer.MAX_VALUE
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Rotation order values are too large to perform automatic rollover."
+            );
+        }
+
+
+        /*
+         * ==================================================
+         * ASSIGN TEMPORARY UNIQUE VALUES
+         * ==================================================
+         */
+
+        for (
+                int index = 0;
+                index < reordered.size();
+                index++
+        ) {
+
+            Rotation rotation =
+                    reordered.get(index);
+
+
+            rotation.setRotationOrder(
+                    (int)
+                            (
+                                    temporaryBase
+                                            +
+                                    index
+                            )
+            );
+        }
+
+
+        /*
+         * Persist temporary values first.
+         */
+
+        rotationRepository.saveAll(
+                reordered
+        );
+
+
+        rotationRepository.flush();
+
+
+        /*
+         * ==================================================
+         * ASSIGN FINAL ORDER
+         * ==================================================
+         *
+         * Example:
+         *
+         * D A B C
+         *
+         * becomes:
+         *
+         * 1 2 3 4
+         */
+
+        for (
+                int index = 0;
+                index < reordered.size();
+                index++
+        ) {
+
+            Rotation rotation =
+                    reordered.get(index);
+
+
+            rotation.setRotationOrder(
+                    index + 1
+            );
+        }
+
+
+        /*
+         * Persist final order.
+         */
+
+        rotationRepository.saveAll(
+                reordered
+        );
+
+
+        rotationRepository.flush();
+    }
+
+
     /*
      * ======================================================
      * GET CURRENT ROTATION COORDINATOR
      * ======================================================
      *
-     * Convenience method for dashboard.
+     * IMPORTANT:
      *
-     * The dashboard can use this result to display:
-     *
-     *      Agency
-     *      Coordinator
-     *      Start Date
-     *      End Date
+     * This method is NOT read-only because
+     * getCurrentRotationAgency() may perform a rollover.
      */
-    @Transactional(readOnly = true)
+
     public Coordinator getCurrentRotationCoordinator() {
 
         Agency agency =
                 getCurrentRotationAgency();
+
 
         if (agency == null) {
 
@@ -644,8 +1268,10 @@ public class RotationService {
             );
         }
 
+
         Long agencyId =
                 agency.getId();
+
 
         if (agencyId == null) {
 
@@ -653,6 +1279,7 @@ public class RotationService {
                     "Current rotation agency has no ID."
             );
         }
+
 
         return coordinatorRepository
                 .findByAgencyId(agencyId)
@@ -663,26 +1290,29 @@ public class RotationService {
                 );
     }
 
+
     /*
      * ======================================================
      * GET NEXT AUTOMATIC ROTATION ORDER
      * ======================================================
      *
-     * Existing:
+     * No fixed maximum.
      *
-     * 1, 2, 3 -> 4
+     * Example:
      *
-     * 1, 2, 5 -> 6
+     * 1,2,3 -> 4
      *
-     * 10, 25 -> 26
+     * 1,2,5 -> 6
      *
-     * There is NO maximum.
+     * 10,25 -> 26
      */
+
     private Integer getNextAutomaticRotationOrder() {
 
         List<Rotation> rotations =
                 rotationRepository
                         .findAllByOrderByRotationOrderAsc();
+
 
         if (
                 rotations == null
@@ -693,34 +1323,47 @@ public class RotationService {
             return 1;
         }
 
-        int highestOrder = 0;
+
+        int highestOrder =
+                0;
+
 
         for (Rotation rotation : rotations) {
 
             if (rotation == null) {
+
                 continue;
             }
+
 
             Integer order =
                     rotation.getRotationOrder();
 
+
             if (order == null) {
+
                 continue;
             }
 
+
             if (order > highestOrder) {
-                highestOrder = order;
+
+                highestOrder =
+                        order;
             }
         }
 
+
         return highestOrder + 1;
     }
+
 
     /*
      * ======================================================
      * VALIDATE COORDINATOR DATES
      * ======================================================
      */
+
     private void validateCoordinatorDates(
             Coordinator coordinator
     ) {
@@ -732,6 +1375,7 @@ public class RotationService {
             );
         }
 
+
         if (
                 coordinator.getStartDate() == null
                         ||
@@ -742,6 +1386,7 @@ public class RotationService {
                     "Coordinator Start Date and End Date are required."
             );
         }
+
 
         if (
                 coordinator.getEndDate()
@@ -756,6 +1401,7 @@ public class RotationService {
         }
     }
 
+
     /*
      * ======================================================
      * CHECK AGENCY DATE OVERLAP
@@ -763,6 +1409,7 @@ public class RotationService {
      *
      * Agency periods MUST NOT overlap.
      */
+
     private void validateNoAgencyDateOverlap(
             Long agencyId,
             LocalDate startDate,
@@ -771,6 +1418,7 @@ public class RotationService {
 
         List<Coordinator> coordinators =
                 coordinatorRepository.findAll();
+
 
         if (
                 coordinators == null
@@ -781,14 +1429,17 @@ public class RotationService {
             return;
         }
 
+
         for (
                 Coordinator existingCoordinator :
                 coordinators
         ) {
 
             if (existingCoordinator == null) {
+
                 continue;
             }
+
 
             if (
                     existingCoordinator.getAgency() == null
@@ -801,9 +1452,11 @@ public class RotationService {
                 continue;
             }
 
+
             /*
              * Ignore the same Agency.
              */
+
             if (
                     existingCoordinator
                             .getAgency()
@@ -814,11 +1467,14 @@ public class RotationService {
                 continue;
             }
 
+
             LocalDate existingStart =
                     existingCoordinator.getStartDate();
 
+
             LocalDate existingEnd =
                     existingCoordinator.getEndDate();
+
 
             if (
                     existingStart == null
@@ -829,8 +1485,9 @@ public class RotationService {
                 continue;
             }
 
+
             /*
-             * Two ranges overlap when:
+             * Two date ranges overlap when:
              *
              * start1 <= end2
              *
@@ -838,10 +1495,12 @@ public class RotationService {
              *
              * end1 >= start2
              */
+
             boolean overlaps =
                     !startDate.isAfter(existingEnd)
                             &&
                     !endDate.isBefore(existingStart);
+
 
             if (overlaps) {
 
@@ -858,29 +1517,39 @@ public class RotationService {
         }
     }
 
+
     /*
      * ======================================================
      * INTERNAL FUTURE ROTATION HOLDER
      * ======================================================
      */
+
     private static class RotationWithDate {
 
         private final Rotation rotation;
+
         private final LocalDate startDate;
+
 
         private RotationWithDate(
                 Rotation rotation,
                 LocalDate startDate
         ) {
+
             this.rotation = rotation;
+
             this.startDate = startDate;
         }
 
+
         private Rotation getRotation() {
+
             return rotation;
         }
 
+
         private LocalDate getStartDate() {
+
             return startDate;
         }
     }
