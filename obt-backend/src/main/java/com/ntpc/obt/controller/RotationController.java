@@ -220,7 +220,7 @@ public class RotationController {
      *
      * 3. If there is no future Agency:
      *
-     *    Restart from the first Agency according to
+     *    restart from the first Agency according to
      *    rotationOrder.
      *
      * API:
