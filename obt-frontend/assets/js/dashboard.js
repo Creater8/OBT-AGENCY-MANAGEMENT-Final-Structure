@@ -1994,7 +1994,7 @@ function showAgencyDetails(
         formatDate(
             coordinator.date
         )
-    );
+    )
 
 
     setElementText(
